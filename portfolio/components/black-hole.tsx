@@ -88,10 +88,8 @@ function RotatingModel({ src }: { src: string }) {
 export function BlackHole({ zoom = 60 }: { zoom?: number }) {
   // This component now renders a normal block-level footer container.
   // Place it inside your footer/section. The parent should control layout/spacing.
-  const heightClass = "h-96" // Increased height for better view
-  // camera will be set closer (zoom) in CameraSetup based on zoom prop
   return (
-    <div className={`w-full ${heightClass} overflow-hidden bg-transparent`}> 
+    <div className="w-full h-full overflow-hidden bg-transparent"> 
       <Canvas
         style={{ width: "100%", height: "100%" }}
         camera={{ position: [-9, 1.5, 2], fov: 45 }}
@@ -126,10 +124,10 @@ useGLTF.preload("/scene.gltf")
 function CameraSetup({ zoom = 1 }: { zoom?: number }) {
   const { camera } = useThree()
   useEffect(() => {
-    // Position camera above and slightly back to match reference image
-    const base = { x: 0, y: 1, z: 3.5 }
+    // Position camera to eliminate bottom padding/margin
+    const base = { x: 0, y: 0.5, z: 3.5 }
     camera.position.set(base.x / zoom, base.y / zoom, base.z / zoom)
-    camera.lookAt(0, 0, 0)
+    camera.lookAt(0, -0.5, 0) // Look slightly down to focus on the black hole
   }, [camera, zoom])
   return null
 }

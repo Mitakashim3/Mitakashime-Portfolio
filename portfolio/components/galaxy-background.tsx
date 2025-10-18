@@ -1,42 +1,17 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef } from "react"
 
 export function GalaxyBackground({ scrollY }: { scrollY: number }) {
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [isReversed, setIsReversed] = useState(false)
 
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
 
-    video.playbackRate = 0.5 // Slow down the animation
-
-    const resetToStart = () => {
-      video.currentTime = 0
-      video.play()
-      setIsReversed(false)
-    }
-
-    const resetToEnd = () => {
-      video.currentTime = video.duration
-      video.play()
-      setIsReversed(true)
-    }
-
-    // Check direction and add appropriate listener
-    const handleTimeUpdate = () => {
-      if (!isReversed && video.currentTime >= video.duration - 0.1) {
-        resetToStart()
-      }
-      if (isReversed && video.currentTime <= 0.1) {
-        resetToEnd()
-      }
-    }
-
-    video.addEventListener("timeupdate", handleTimeUpdate)
-    return () => video.removeEventListener("timeupdate", handleTimeUpdate)
-  }, [isReversed])
+    // Set playback rate for smooth animation
+    video.playbackRate = 0.5 // Slow down the animation for a more cinematic effect
+  }, [])
 
   return (
     <>
@@ -44,7 +19,9 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
         ref={videoRef}
         autoPlay
         muted
+        loop
         playsInline
+        preload="metadata"
         className="fixed inset-0 w-full h-full object-cover z-0 pointer-events-none"
         style={{
           transform: `scale(1.1) translateY(${scrollY * 0.02}px)`,

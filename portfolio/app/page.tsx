@@ -9,12 +9,13 @@ import { useScrollVisibility } from "@/hooks/use-scroll-visibility"
 import { AnimatedText } from "@/components/animated-text"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import { Github, Linkedin, Mail, ExternalLink, ChevronDown } from "lucide-react"
+import { Github, Linkedin, Mail, ExternalLink, ChevronDown, ArrowUp } from "lucide-react"
 import { BlackHole } from "@/components/black-hole"
 import { GalaxyBackground } from "@/components/galaxy-background"
 
 export default function Portfolio() {
   const [scrollY, setScrollY] = useState(0)
+  const [activeSection, setActiveSection] = useState("")
   const heroRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
@@ -22,7 +23,20 @@ export default function Portfolio() {
   }, [])
 
   useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY)
+    const handleScroll = () => {
+      setScrollY(window.scrollY)
+      
+      // Update active section based on scroll position
+      const sections = ['about', 'projects', 'skills', 'contact']
+      const currentSection = sections.find(section => {
+        const element = document.getElementById(section)
+        if (!element) return false
+        const rect = element.getBoundingClientRect()
+        return rect.top <= 100 && rect.bottom >= 100
+      })
+      setActiveSection(currentSection || '')
+    }
+    
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
@@ -47,7 +61,11 @@ export default function Portfolio() {
           <div className="flex items-center gap-6">
             <motion.button
               onClick={() => scrollToSection("about")}
-              className="hover:text-primary transition-all duration-300 hover:scale-105 font-mono"
+              className={`transition-all duration-300 hover:scale-105 font-mono ${
+                activeSection === "about" 
+                  ? "text-primary border-b-2 border-primary" 
+                  : "text-gray-400 hover:text-primary"
+              }`}
               initial={{ color: "rgb(156 163 175)" }}
               whileInView={{ color: "rgb(255 255 255)" }}
               transition={{ duration: 0.5 }}
@@ -56,7 +74,11 @@ export default function Portfolio() {
             </motion.button>
             <motion.button
               onClick={() => scrollToSection("projects")}
-              className="hover:text-primary transition-all duration-300 hover:scale-105 font-mono"
+              className={`transition-all duration-300 hover:scale-105 font-mono ${
+                activeSection === "projects" 
+                  ? "text-primary border-b-2 border-primary" 
+                  : "text-gray-400 hover:text-primary"
+              }`}
               initial={{ color: "rgb(156 163 175)" }}
               whileInView={{ color: "rgb(255 255 255)" }}
               transition={{ duration: 0.5 }}
@@ -65,7 +87,11 @@ export default function Portfolio() {
             </motion.button>
             <motion.button
               onClick={() => scrollToSection("skills")}
-              className="hover:text-primary transition-all duration-300 hover:scale-105 font-mono"
+              className={`transition-all duration-300 hover:scale-105 font-mono ${
+                activeSection === "skills" 
+                  ? "text-primary border-b-2 border-primary" 
+                  : "text-gray-400 hover:text-primary"
+              }`}
               initial={{ color: "rgb(156 163 175)" }}
               whileInView={{ color: "rgb(255 255 255)" }}
               transition={{ duration: 0.5 }}
@@ -74,7 +100,11 @@ export default function Portfolio() {
             </motion.button>
             <motion.button
               onClick={() => scrollToSection("contact")}
-              className="hover:text-primary transition-all duration-300 hover:scale-105 font-mono"
+              className={`transition-all duration-300 hover:scale-105 font-mono ${
+                activeSection === "contact" 
+                  ? "text-primary border-b-2 border-primary" 
+                  : "text-gray-400 hover:text-primary"
+              }`}
               initial={{ color: "rgb(156 163 175)" }}
               whileInView={{ color: "rgb(255 255 255)" }}
               transition={{ duration: 0.5 }}
@@ -544,10 +574,11 @@ export default function Portfolio() {
               </div>
             </div>
             <Card className="p-6 hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/30 bg-card/80 backdrop-blur-sm">
-              <form className="space-y-4">
+              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
                 <div>
                   <Input
                     placeholder="Your Name"
+                    required
                     className="w-full hover:border-primary/50 focus:border-primary transition-colors duration-300 font-mono"
                   />
                 </div>
@@ -555,16 +586,21 @@ export default function Portfolio() {
                   <Input
                     type="email"
                     placeholder="Your Email"
+                    required
                     className="w-full hover:border-primary/50 focus:border-primary transition-colors duration-300 font-mono"
                   />
                 </div>
                 <div>
                   <Textarea
                     placeholder="Your Message"
+                    required
                     className="w-full min-h-[120px] resize-none hover:border-primary/50 focus:border-primary transition-colors duration-300 font-mono"
                   />
                 </div>
-                <Button className="w-full bg-primary hover:bg-primary/90 text-white hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-primary/25 font-mono">
+                <Button 
+                  type="submit"
+                  className="w-full bg-primary hover:bg-primary/90 text-white hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-primary/25 font-mono"
+                >
                   Send Message
                 </Button>
               </form>
@@ -574,12 +610,25 @@ export default function Portfolio() {
       </section>
 
       {/* Blackhole footer-only container (no padding). Pass zoom to make it appear closer/zoomed-in */}
-      <section id="blackhole" className="relative z-50 min-h-[400px]" aria-hidden={false}>
+      <section id="blackhole" className="relative z-50 h-[400px]" aria-hidden={false}>
         <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-transparent pointer-events-none" />
         <div className="relative w-full h-full">
           <BlackHole zoom={1.4} />
         </div>
       </section>
+
+      {/* Scroll to top button */}
+      {scrollY > 500 && (
+        <motion.button
+          initial={{ opacity: 0, scale: 0 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0 }}
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          className="fixed bottom-8 right-8 z-50 bg-primary/90 hover:bg-primary text-white p-3 rounded-full shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-110"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </motion.button>
+      )}
     </div>
   )
 }
