@@ -16,7 +16,7 @@
   --secondary: oklch(0.15 0 0);
   --secondary-foreground: oklch(0.9 0 0);
   --muted: oklch(0.15 0 0);
-  --muted-foreground: oklch(0.6 0 0);
+  --muted-foreground: oklch(0.8 0 0);
   --accent: oklch(0.6 0.12 160);
   --accent-foreground: oklch(0.08 0 0);
   --destructive: oklch(0.6 0.2 25);
@@ -38,6 +38,22 @@
   --sidebar-accent-foreground: oklch(0.9 0 0);
   --sidebar-border: oklch(0.2 0 0);
   --sidebar-ring: oklch(0.55 0.15 160 / 0.4);
+}
+
+/* Global styles to ensure text stays white on hover */
+* {
+  color-scheme: dark;
+}
+
+button:hover,
+a:hover,
+.hover-white:hover {
+  color: white !important;
+}
+
+/* Override any dark text colors on hover for buttons and interactive elements */
+[class*="hover:"]:hover {
+  color: white !important;
 }
 
 /* Keep dark class for consistency but it's now the same as root */
