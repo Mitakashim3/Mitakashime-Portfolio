@@ -105,14 +105,14 @@ export function BlackHole({ zoom = 60 }: { zoom?: number }) {
           glAny.setClearColor(0x000000, 0)
         }}
       >
-        <ambientLight intensity={0.4} />
+        <ambientLight intensity={2} />
         <directionalLight position={[0, 3, 5]} intensity={1.5} />
-        <directionalLight position={[0, -3, -5]} intensity={0.5} />
+        <directionalLight position={[0, -3, -5]} intensity={1} />
         <Suspense fallback={null}>
           <RotatingModel src="/scene.gltf" />
           <Environment preset="night" background={false} />
         </Suspense>
-        <CameraSetup zoom={zoom} />
+        <CameraSetup zoom={1.3} />
         <OrbitControls enablePan={false} enableZoom={true} enableRotate={true} />
       </Canvas>
     </div>
