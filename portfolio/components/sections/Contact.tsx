@@ -23,22 +23,67 @@ export function Contact({ scrollY, componentScale }: Props) {
               question or just want to say hi, feel free to reach out across the digital galaxy!
             </AnimatedText>
             <div className="space-y-4">
-              <div className="flex items-center gap-3 hover:text-primary transition-colors duration-300 cursor-pointer font-mono">
-                <Mail className="h-5 w-5 text-primary" />
-                <span>{LINKS.email}</span>
-              </div>
-              <div className="flex items-center gap-3 hover:text-primary transition-colors duration-300 cursor-pointer font-mono">
-                <Github className="h-5 w-5 text-primary" />
-                <span>{LINKS.github}</span>
-              </div>
-              <div className="flex items-center gap-3 hover:text-primary transition-colors duration-300 cursor-pointer font-mono">
-                <Linkedin className="h-5 w-5 text-primary" />
-                <span>{LINKS.linkedin}</span>
-              </div>
+              <a
+                href={`mailto:${LINKS.email}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 transition-colors duration-300 cursor-pointer font-mono group px-2 py-1 rounded-md hover:bg-primary/10 hover:shadow-md"
+              >
+                <Mail className="h-5 w-5 text-primary group-hover:scale-125 transition-transform duration-300" />
+                <span className="group-hover:text-primary group-hover:decoration-2 transition-colors duration-300">
+                  Gmail - clarkjimgabiota
+                </span>
+              </a>
+              <a
+                href={LINKS.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 transition-colors duration-300 cursor-pointer font-mono group px-2 py-1 rounded-md hover:bg-primary/10 hover:shadow-md"
+              >
+                <Github className="h-5 w-5 text-primary group-hover:scale-125 transition-transform duration-300" />
+                <span className="group-hover:text-primary group-hover:decoration-2 transition-colors duration-300">
+                  GitHub - Mitakashim3
+                </span>
+              </a>
+              <a
+                href={`https://${LINKS.linkedin.replace(/^https?:\/\//, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 transition-colors duration-300 cursor-pointer font-mono group px-2 py-1 rounded-md hover:bg-primary/10 hover:shadow-md"
+              >
+                <Linkedin className="h-5 w-5 text-primary group-hover:scale-125 transition-transform duration-300" />
+                <span className=" group-hover:text-primary group-hover:decoration-2 transition-colors duration-300">
+                  LinkedIn - Clark Jim Gabiota
+                </span>
+              </a>
             </div>
+
+
           </div>
           <Card className="p-6 hover:shadow-lg transition-all duration-300 border-border/50 hover:border-primary/30 bg-card/80 backdrop-blur-sm">
-            <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+            <form
+              className="space-y-4"
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const data = {
+                  name: e.target[0].value,
+                  email: e.target[1].value,
+                  message: e.target[2].value,
+                };
+                const res = await fetch('/api/contact', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(data),
+                });
+                if (res.ok) {
+                  alert('Message sent!');
+                  e.target.reset();
+                } else {
+                  alert('Failed to send.');
+                }
+              }}>
               <Input placeholder="Your Name" required className="w-full hover:border-primary/50 focus:border-primary transition-colors duration-300 font-mono" />
               <Input type="email" placeholder="Your Email" required className="w-full hover:border-primary/50 focus:border-primary transition-colors duration-300 font-mono" />
               <Textarea placeholder="Your Message" required className="w-full min-h-[120px] resize-none hover:border-primary/50 focus:border-primary transition-colors duration-300 font-mono" />
@@ -50,6 +95,7 @@ export function Contact({ scrollY, componentScale }: Props) {
     </section>
   )
 }
+
 
 
 

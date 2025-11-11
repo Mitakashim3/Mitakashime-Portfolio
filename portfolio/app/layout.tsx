@@ -5,6 +5,7 @@ import { Space_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { Suspense } from "react"
 import "./globals.css"
+import { Toaster } from "@/components/ui/sonner"
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -20,9 +21,11 @@ const spaceMono = Space_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "v0 App",
-  description: "Created with v0",
-  generator: "v0.app",
+  title: "Mitakashime Portfolio",
+  description: "A portfolio showcasing the projects and skills of Mitakashime.",
+  icons: {
+    icon: "/MitakashimeLogo.svg",
+  },
 }
 
 export default function RootLayout({
@@ -35,6 +38,7 @@ export default function RootLayout({
       <body className={`font-sans ${orbitron.variable} ${spaceMono.variable}`}>
         <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
         <Analytics />
+        <Toaster />
       </body>
     </html>
   )
