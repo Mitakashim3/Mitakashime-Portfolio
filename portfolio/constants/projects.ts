@@ -8,41 +8,62 @@ export type Project = {
 
 export const PROJECTS: Project[] = [
   {
-    title: "AI-Powered Task Manager",
+    title: "POLYCON (Conqode)",
     description:
-      "A smart task management app that uses AI to prioritize and categorize tasks automatically.",
-    tech: ["React", "Node.js", "OpenAI API", "MongoDB"],
-    image: "/modern-task-dashboard.png",
+      "A cross-platform consultation system developed as a thesis project for streamlining manual consultation workflows. Features include descriptive analysis and an AI-driven minutes recorder to automatically transcribe and summarize meetings. Built collaboratively under the group name Develorant (now Conqode).",
+    tech: [
+      "React.js",
+      "TypeScript",
+      "Tailwind CSS",
+      "Python (Flask)",
+      "AssemblyAI API",
+      "Gemini API",
+      "PostgreSQL",
+      "WebSockets",
+      "Cloudinary",
+      "Render"
+    ],
+    image: "/PolyconProject.png",
+    href: "",
   },
   {
-    title: "E-Commerce Platform",
-    description: "Full-stack e-commerce solution with payment integration and admin dashboard.",
-    tech: ["Next.js", "Stripe", "PostgreSQL", "Tailwind CSS"],
-    image: "/clean-e-commerce-website-interface.jpg",
+    title: "Estature",
+    description:
+      "A real-estate platform with AI-assisted broker eligibility scoring that aggregates social media signals to provide richer client insights. The system evaluates broker profiles by analyzing publicly available social data to improve client trust and matching accuracy. This project is actively in development.",
+    tech: [
+      "Next.js",
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "Python (FastAPI)",
+      "MongoDB",
+      "Redis",
+      "NextAuth",
+      "Social Media APIs (LinkedIn, X, Facebook)",
+      "Cloudinary",
+      "Render",
+      "Gemini"
+    ],
+    image: "/EstatureProject.png",
+    href: "",
   },
   {
-    title: "Weather Analytics Dashboard",
-    description: "Real-time weather data visualization with predictive analytics and alerts.",
-    tech: ["React", "D3.js", "Python", "FastAPI"],
-    image: "/weather-dashboard-with-charts-and-graphs.jpg",
-  },
-  {
-    title: "Social Media Scheduler",
-    description: "Automated social media posting tool with analytics and content optimization.",
-    tech: ["Vue.js", "Express.js", "Redis", "Social APIs"],
-    image: "/social-media-management-interface.jpg",
-  },
-  {
-    title: "Blockchain Voting System",
-    description: "Secure and transparent voting platform built on blockchain technology.",
-    tech: ["Solidity", "Web3.js", "React", "Ethereum"],
-    image: "/blockchain-voting-interface.png",
-  },
-  {
-    title: "ML Image Classifier",
-    description: "Machine learning model for image classification with web interface.",
-    tech: ["Python", "TensorFlow", "Flask", "Docker"],
-    image: "/machine-learning-image-classification-app.jpg",
+    title: "Portnerate",
+    description:
+      "A portfolio-generation web app that creates ready-to-publish portfolios from user inputs and selectable templates. The project is designed to experiment with automated content generation, responsive template composition, PDF export, and customizable styling presets to rapidly produce professional portfolios for different fields.",
+    tech: [
+      "Vite",
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "Python (Flask)",
+      "Serverless functions",
+      "Puppeteer (PDF export)",
+      "Cloudinary",
+      "Prisma"
+    ],
+    image: "/PortnerateProject.jpg",
+    href: "",
   },
 ]
 

@@ -43,10 +43,10 @@ export const EXPERIENCE: ExperienceEntry[] = [
       "Developed responsive web applications using React and TypeScript. Collaborated with design team to implement pixel-perfect UI components and improved application performance by 30%.",
   },
   {
-    title: "Open Source Contributor",
-    organization: "Various Projects",
-    period: "2022 - Present",
+    title: "Wordpress Certificate",
+    organization: "Udemy",
+    period: "2022",
     description:
-      "Active contributor to open-source projects including React libraries and developer tools. Contributed bug fixes, feature implementations, and documentation improvements to projects with 10k+ stars.",
+      "Completed a comprehensive Udemy course in WordPress development covering theme and plugin development, customization, deployment, and basic PHP. Gained hands-on experience building responsive WordPress sites, configuring CMS workflows, and applying best practices for performance, security, and SEO.",
   },
 ]
