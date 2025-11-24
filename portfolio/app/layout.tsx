@@ -34,9 +34,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      <body className={`font-sans ${orbitron.variable} ${spaceMono.variable}`}>
-        <Suspense fallback={<div>Loading...</div>}>{children}</Suspense>
+    <html lang="en" className="scroll-smooth">
+      <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+        <meta name="theme-color" content="#14141a" />
+      </head>
+      <body className={`font-sans ${orbitron.variable} ${spaceMono.variable} overflow-x-hidden touch-pan-y`}>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>{children}</Suspense>
         <Analytics />
         <Toaster />
       </body>
