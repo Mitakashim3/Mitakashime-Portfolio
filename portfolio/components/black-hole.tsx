@@ -26,8 +26,8 @@ function RotatingModel({ src, isMobile, isLowEnd }: { src: string; isMobile: boo
       gltf.scene.scale.set(1, 1, 1)
       gltf.scene.position.set(0, 0, 0)
       
-      // Apply initial rotation
-      gltf.scene.rotation.set(0, Math.PI / 2, 0)
+      // Apply initial rotation to view from the side/edge (like in the reference image)
+      gltf.scene.rotation.set(Math.PI / 2, 0, 0)
       
       // Ensure all children are properly positioned relative to parent
       gltf.scene.traverse((child: any) => {
@@ -38,11 +38,11 @@ function RotatingModel({ src, isMobile, isLowEnd }: { src: string; isMobile: boo
     }
   }, [gltf])
 
-  // Rotate slowly around the vertical axis (reduce rotation speed on low-end devices)
+  // Rotate slowly around the Z axis for edge-on view (reduce rotation speed on low-end devices)
   useFrame((state, delta) => {
     if (gltf?.scene) {
       const rotationSpeed = isLowEnd ? 0.05 : 0.1
-      gltf.scene.rotation.y += delta * rotationSpeed
+      gltf.scene.rotation.z += delta * rotationSpeed
     }
   })
   
@@ -107,64 +107,82 @@ function RotatingModel({ src, isMobile, isLowEnd }: { src: string; isMobile: boo
 
 export function BlackHole({ zoom = 60 }: { zoom?: number }) {
   const capabilities = useDeviceCapabilities()
-  const [shouldRender, setShouldRender] = useState(false)
+  const [shouldRender, setShouldRender] = useState(true) // Changed to true for immediate render
+  const [hasError, setHasError] = useState(false)
 
-  // Lazy load 3D scene for better initial load performance
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShouldRender(true)
-    }, 500) // Delay 3D scene to prioritize above-the-fold content
+  // Check if we're in browser environment
+  const isBrowser = typeof window !== 'undefined'
 
-    return () => clearTimeout(timer)
-  }, [])
+  // Don't render on server side
+  if (!isBrowser) {
+    return null
+  }
 
-  // Don't render 3D scene if WebGL is not supported or user prefers reduced motion
-  if (!capabilities.supportsWebGL || capabilities.prefersReducedMotion) {
+  // Fallback UI for reduced motion preference
+  if (capabilities.prefersReducedMotion) {
     return (
       <div className="w-full h-full overflow-hidden bg-transparent flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-orange-500 to-black animate-pulse" />
-          <p className="mt-4 text-sm text-muted-foreground">Black Hole Visualization</p>
+        <div className="text-center px-4">
+          <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full bg-linear-to-br from-orange-500 to-black animate-pulse" />
+          <p className="mt-4 text-xs sm:text-sm text-muted-foreground">Black Hole Visualization</p>
         </div>
       </div>
     )
   }
 
-  if (!shouldRender) {
+  // Error fallback
+  if (hasError) {
     return (
       <div className="w-full h-full overflow-hidden bg-transparent flex items-center justify-center">
-        <div className="text-sm text-muted-foreground">Loading 3D scene...</div>
+        <div className="text-center px-4">
+          <div className="w-24 h-24 sm:w-32 sm:h-32 mx-auto rounded-full bg-linear-to-br from-orange-500 via-yellow-600 to-black" />
+          <p className="mt-4 text-xs sm:text-sm text-muted-foreground">Black Hole</p>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="w-full h-full overflow-hidden bg-transparent"> 
+    <div className="w-full h-full overflow-hidden bg-transparent min-h-[300px] sm:min-h-[400px]"> 
       <Canvas
         style={{ width: "100%", height: "100%" }}
-        camera={{ position: [-9, 1.5, 2], fov: 45 }}
-        dpr={capabilities.isMobile ? 1 : Math.min(capabilities.devicePixelRatio, 2)} // Limit pixel ratio on mobile
-        performance={{ min: 0.5 }} // Allow frame rate to drop if needed
+        camera={{ 
+          position: capabilities.isMobile ? [0, 0, 4] : [0, 0, 5], 
+          fov: capabilities.isMobile ? 50 : 45 
+        }}
+        dpr={capabilities.isMobile ? 1 : Math.min(capabilities.devicePixelRatio, 2)}
+        performance={{ min: 0.5 }}
         gl={{
-          antialias: !capabilities.isLowEnd, // Disable antialiasing on low-end devices
+          antialias: !capabilities.isLowEnd,
           powerPreference: capabilities.isMobile ? "low-power" : "high-performance",
         }}
         onCreated={(state) => {
-          // make bright areas stand out more
-          const glAny = state.gl as any
-          const threeAny = THREE as any
-          glAny.toneMapping = threeAny.ACESFilmicToneMapping
-          glAny.toneMappingExposure = capabilities.isMobile ? 1.8 : 2.2
-          glAny.outputEncoding = threeAny.sRGBEncoding
-          glAny.physicallyCorrectLights = !capabilities.isLowEnd
-          glAny.alpha = true
-          glAny.setClearColor(0x000000, 0)
+          try {
+            const glAny = state.gl as any
+            const threeAny = THREE as any
+            glAny.toneMapping = threeAny.ACESFilmicToneMapping
+            glAny.toneMappingExposure = capabilities.isMobile ? 1.8 : 2.2
+            glAny.outputEncoding = threeAny.sRGBEncoding
+            glAny.physicallyCorrectLights = !capabilities.isLowEnd
+            glAny.alpha = true
+            glAny.setClearColor(0x000000, 0)
+          } catch (error) {
+            console.error('WebGL setup error:', error)
+            setHasError(true)
+          }
         }}
       >
         <ambientLight intensity={capabilities.isMobile ? 1.5 : 2} />
-        <directionalLight position={[0, 3, 5]} intensity={capabilities.isMobile ? 1 : 1.5} castShadow={false} />
-        <directionalLight position={[0, -3, -5]} intensity={capabilities.isMobile ? 0.7 : 1} castShadow={false} />
-        <Suspense fallback={null}>
+        <directionalLight position={[5, 3, 5]} intensity={capabilities.isMobile ? 1 : 1.5} castShadow={false} />
+        <directionalLight position={[-5, -3, -5]} intensity={capabilities.isMobile ? 0.7 : 1} castShadow={false} />
+        <Suspense 
+          fallback={
+            <mesh>
+              <sphereGeometry args={[1, 32, 32]} />
+              <meshBasicMaterial color="#ff8c00" />
+            </mesh>
+          }
+        >
           <RotatingModel 
             src="/scene.gltf" 
             isMobile={capabilities.isMobile} 
@@ -172,14 +190,16 @@ export function BlackHole({ zoom = 60 }: { zoom?: number }) {
           />
           {!capabilities.isLowEnd && <Environment preset="night" background={false} />}
         </Suspense>
-        <CameraSetup zoom={1.3} />
+        <CameraSetup zoom={1} isMobile={capabilities.isMobile} />
         <OrbitControls 
           enablePan={false} 
-          enableZoom={!capabilities.isMobile} // Disable zoom on mobile to prevent conflicts with pinch gestures
+          enableZoom={!capabilities.isMobile}
           enableRotate={true}
           rotateSpeed={capabilities.isMobile ? 0.5 : 1}
           enableDamping={!capabilities.isLowEnd}
           dampingFactor={0.05}
+          maxPolarAngle={Math.PI / 1.8}
+          minPolarAngle={Math.PI / 2.5}
         />
       </Canvas>
     </div>
@@ -188,13 +208,12 @@ export function BlackHole({ zoom = 60 }: { zoom?: number }) {
 
 useGLTF.preload("/scene.gltf")
 
-function CameraSetup({ zoom = 1 }: { zoom?: number }) {
+function CameraSetup({ zoom = 1, isMobile = false }: { zoom?: number; isMobile?: boolean }) {
   const { camera } = useThree()
   useEffect(() => {
-    // Position camera to eliminate bottom padding/margin
-    const base = { x: 0, y: 0.5, z: 3.5 }
-    camera.position.set(base.x / zoom, base.y / zoom, base.z / zoom)
-    camera.lookAt(0, -0.5, 0) // Look slightly down to focus on the black hole
-  }, [camera, zoom])
+    // Position camera for edge-on view (looking straight at the black hole from the front)
+    camera.position.set(0, 0, isMobile ? 4 : 5)
+    camera.lookAt(0, 0, 0) // Look directly at the center
+  }, [camera, zoom, isMobile])
   return null
 }

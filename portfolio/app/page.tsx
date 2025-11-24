@@ -65,8 +65,8 @@ export default function Portfolio() {
       </div>
 
       {/* Blackhole footer */}
-      <section id="blackhole" className="relative z-50 h-[400px]" aria-hidden={false}>
-        <div className="absolute inset-0 bg-gradient-to-t from-transparent via-transparent to-transparent pointer-events-none" />
+      <section id="blackhole" className="relative z-50 h-[300px] sm:h-[400px] md:h-[500px]" aria-hidden={false}>
+        <div className="absolute inset-0 bg-linear-to-t from-transparent via-transparent to-transparent pointer-events-none" />
         <div className="relative w-full h-full">
           <BlackHole />
         </div>
