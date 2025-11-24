@@ -147,8 +147,8 @@ export function BlackHole({ zoom = 60 }: { zoom?: number }) {
       <Canvas
         style={{ width: "100%", height: "100%" }}
         camera={{ 
-          position: capabilities.isMobile ? [0, 0, 4] : [0, 0, 5], 
-          fov: capabilities.isMobile ? 50 : 45 
+          position: capabilities.isMobile ? [0, 0, 8] : capabilities.isTablet ? [0, 0, 6] : [0, 0, 5], 
+          fov: capabilities.isMobile ? 60 : capabilities.isTablet ? 55 : 45 
         }}
         dpr={capabilities.isMobile ? 1 : Math.min(capabilities.devicePixelRatio, 2)}
         performance={{ min: 0.5 }}
@@ -190,7 +190,7 @@ export function BlackHole({ zoom = 60 }: { zoom?: number }) {
           />
           {!capabilities.isLowEnd && <Environment preset="night" background={false} />}
         </Suspense>
-        <CameraSetup zoom={1} isMobile={capabilities.isMobile} />
+        <CameraSetup zoom={1} isMobile={capabilities.isMobile} isTablet={capabilities.isTablet} />
         <OrbitControls 
           enablePan={false} 
           enableZoom={!capabilities.isMobile}
@@ -200,6 +200,8 @@ export function BlackHole({ zoom = 60 }: { zoom?: number }) {
           dampingFactor={0.05}
           maxPolarAngle={Math.PI / 1.8}
           minPolarAngle={Math.PI / 2.5}
+          minDistance={capabilities.isMobile ? 6 : 4}
+          maxDistance={capabilities.isMobile ? 12 : 10}
         />
       </Canvas>
     </div>
@@ -208,12 +210,13 @@ export function BlackHole({ zoom = 60 }: { zoom?: number }) {
 
 useGLTF.preload("/scene.gltf")
 
-function CameraSetup({ zoom = 1, isMobile = false }: { zoom?: number; isMobile?: boolean }) {
+function CameraSetup({ zoom = 1, isMobile = false, isTablet = false }: { zoom?: number; isMobile?: boolean; isTablet?: boolean }) {
   const { camera } = useThree()
   useEffect(() => {
-    // Position camera for edge-on view (looking straight at the black hole from the front)
-    camera.position.set(0, 0, isMobile ? 4 : 5)
+    // Position camera for edge-on view with responsive distance
+    const distance = isMobile ? 8 : isTablet ? 6 : 5
+    camera.position.set(0, 0, distance)
     camera.lookAt(0, 0, 0) // Look directly at the center
-  }, [camera, zoom, isMobile])
+  }, [camera, zoom, isMobile, isTablet])
   return null
 }

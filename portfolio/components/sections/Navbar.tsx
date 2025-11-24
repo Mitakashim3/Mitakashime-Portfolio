@@ -1,7 +1,9 @@
 "use client"
 
+import { useState } from "react"
 import Image from "next/image"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
+import { Menu, X } from "lucide-react"
 import { NAV_SECTIONS } from "@/constants/links"
 import { SITE } from "@/constants/content"
 
@@ -11,18 +13,27 @@ type Props = {
 }
 
 export function Navbar({ activeSection, onNavigate }: Props) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const handleNavigate = (id: string) => {
+    onNavigate(id)
+    setIsMenuOpen(false)
+  }
+
   return (
     <nav className="fixed top-0 w-full bg-background/20 backdrop-blur-sm border-b border-border z-50">
-      <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-        <div className="flex items-center gap-2 cursor-pointer" onClick={() => onNavigate("hero")}>
-          <Image src="/MitakashimeLogo.svg" alt="Mitakashime Logo" width={64} height={64} />
-          <h1 className="text-xl font-bold text-primary font-mono">{SITE.name}</h1>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+        <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleNavigate("hero")}>
+          <Image src="/MitakashimeLogo.svg" alt="Mitakashime Logo" width={48} height={48} className="sm:w-16 sm:h-16" />
+          <h1 className="text-lg sm:text-xl font-bold text-primary font-mono">{SITE.name}</h1>
         </div>
-        <div className="flex items-center gap-6">
+
+        {/* Desktop Menu */}
+        <div className="hidden md:flex items-center gap-6">
           {NAV_SECTIONS.map((id) => (
             <motion.button
               key={id}
-              onClick={() => onNavigate(id)}
+              onClick={() => handleNavigate(id)}
               className={`transition-all duration-300 hover:scale-105 font-mono ${
                 activeSection === id ? "text-primary border-b-2 border-primary" : "text-gray-400 hover:text-primary"
               }`}
@@ -34,7 +45,46 @@ export function Navbar({ activeSection, onNavigate }: Props) {
             </motion.button>
           ))}
         </div>
+
+        {/* Mobile Hamburger Button */}
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="md:hidden text-primary hover:text-primary/80 transition-colors p-2 touch-manipulation"
+          aria-label="Toggle menu"
+        >
+          {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        </button>
       </div>
+
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden bg-background/95 backdrop-blur-md border-b border-border overflow-hidden"
+          >
+            <div className="flex flex-col px-4 py-3 space-y-1">
+              {NAV_SECTIONS.map((id) => (
+                <motion.button
+                  key={id}
+                  onClick={() => handleNavigate(id)}
+                  className={`text-left py-3 px-4 rounded-md transition-all duration-300 font-mono touch-manipulation ${
+                    activeSection === id
+                      ? "text-primary bg-primary/10 border-l-4 border-primary"
+                      : "text-gray-400 hover:text-primary hover:bg-primary/5"
+                  }`}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  {id.charAt(0).toUpperCase() + id.slice(1)}
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   )
 }
