@@ -1,10 +1,12 @@
 "use client"
 
+import dynamic from "next/dynamic"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { ArrowUp } from "lucide-react"
-import { BlackHole } from "@/components/black-hole"
-import { GalaxyBackground } from "@/components/galaxy-background"
+// Dynamic import client-only heavy components to avoid SSR/client markup mismatch
+const BlackHole = dynamic(() => import("@/components/black-hole").then((m) => m.BlackHole), { ssr: false })
+const GalaxyBackground = dynamic(() => import("@/components/galaxy-background").then((m) => m.GalaxyBackground), { ssr: false })
 import { Navbar } from "@/components/sections/Navbar"
 import { Hero } from "@/components/sections/Hero"
 import { About } from "@/components/sections/About"

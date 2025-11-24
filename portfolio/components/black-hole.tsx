@@ -1,6 +1,6 @@
 "use client"
 
-import { Suspense, useEffect, useState } from "react"
+import { Suspense, useEffect, useRef, useState } from "react"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
 import { OrbitControls, useGLTF, Environment } from "@react-three/drei"
 import * as THREE from "three"
@@ -26,8 +26,9 @@ function RotatingModel({ src, isMobile, isLowEnd }: { src: string; isMobile: boo
       gltf.scene.scale.set(1, 1, 1)
       gltf.scene.position.set(0, 0, 0)
       
-      // Apply initial rotation to view from the side/edge (like in the reference image)
-      gltf.scene.rotation.set(Math.PI / 2, 0, 0)
+      // Apply initial rotation: tilt slightly upward for the default view from the photo
+      // X-axis rotation tilts it up/down, keep it at about 75-80 degrees
+      gltf.scene.rotation.set(Math.PI / 2.4, 0, 0)
       
       // Ensure all children are properly positioned relative to parent
       gltf.scene.traverse((child: any) => {
@@ -38,11 +39,14 @@ function RotatingModel({ src, isMobile, isLowEnd }: { src: string; isMobile: boo
     }
   }, [gltf])
 
-  // Rotate slowly around the Z axis for edge-on view (reduce rotation speed on low-end devices)
+  // Rotate the accretion disk like Saturn's rings (spinning in its plane)
   useFrame((state, delta) => {
     if (gltf?.scene) {
-      const rotationSpeed = isLowEnd ? 0.05 : 0.1
-      gltf.scene.rotation.z += delta * rotationSpeed
+      // Since we tilted the model 90° on X-axis (Math.PI/2), 
+      // rotate on Y-axis to spin the disk in its own plane
+      // Slower speed on mobile/low-end devices for better performance
+      const rotationSpeed = isMobile ? 0.15 : isLowEnd ? 0.2 : 0.3
+      gltf.scene.rotation.y += delta * rotationSpeed
     }
   })
   
@@ -198,10 +202,11 @@ export function BlackHole({ zoom = 60 }: { zoom?: number }) {
           rotateSpeed={capabilities.isMobile ? 0.5 : 1}
           enableDamping={!capabilities.isLowEnd}
           dampingFactor={0.05}
-          maxPolarAngle={Math.PI / 1.8}
-          minPolarAngle={Math.PI / 2.5}
-          minDistance={capabilities.isMobile ? 6 : 4}
-          maxDistance={capabilities.isMobile ? 12 : 10}
+          // Allow full vertical rotation (up/down)
+          maxPolarAngle={Math.PI}
+          minPolarAngle={0}
+          minDistance={capabilities.isMobile ? 5 : 3}
+          maxDistance={capabilities.isMobile ? 50 : 100}
         />
       </Canvas>
     </div>
