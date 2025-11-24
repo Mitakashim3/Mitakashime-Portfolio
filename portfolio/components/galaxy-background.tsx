@@ -61,7 +61,7 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
   if (capabilities.prefersReducedMotion) {
     return (
       <div
-        className="fixed inset-0 w-full h-full z-0 pointer-events-none bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950"
+        className="fixed inset-0 w-full h-full z-0 pointer-events-none bg-linear-to-b from-slate-950 via-slate-900 to-slate-950"
         style={{
           backgroundImage: "radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 50%)",
         }}
@@ -91,7 +91,7 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
         height={capabilities.isMobile ? "480" : undefined}
       />
       {/* Gradient overlay for better text readability */}
-      <div className="fixed inset-0 bg-gradient-to-b from-background/50 via-background/30 to-background/50 z-0 pointer-events-none" />
+      <div className="fixed inset-0 bg-linear-to-b from-background/50 via-background/30 to-background/50 z-0 pointer-events-none" />
     </>
   )
 }

@@ -24,7 +24,8 @@ export const metadata: Metadata = {
   title: "Mitakashime Portfolio",
   description: "A portfolio showcasing the projects and skills of Mitakashime.",
   icons: {
-    icon: "/MitakashimeLogo.svg",
+    icon: "/MitakashimeLogo(B&W)Circle.svg",
+    shortcut: "/MitakashimeLogo(B&W)Circle.svg",
   },
 }
 
@@ -38,6 +39,10 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
         <meta name="theme-color" content="#14141a" />
+        {/* Fallback favicon links for browsers that don't use metadata.icons */}
+        <link rel="icon" href="/MitakashimeLogo(B&W)Circle.svg" />
+        <link rel="shortcut icon" href="/MitakashimeLogo(B&W)Circle.svg" />
+        <link rel="apple-touch-icon" href="/MitakashimeLogo(B&W)Circle.svg" />
       </head>
       <body className={`font-sans ${orbitron.variable} ${spaceMono.variable} overflow-x-hidden touch-pan-y`}>
         <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>{children}</Suspense>

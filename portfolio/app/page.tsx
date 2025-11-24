@@ -50,7 +50,7 @@ export default function Portfolio() {
       {/* Fixed position galaxy background that spans the entire viewport */}
       <div className="fixed inset-0 w-full h-full z-0">
         <GalaxyBackground scrollY={scrollY} />
-        <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/30 to-background/50" />
+        <div className="absolute inset-0 bg-linear-to-b from-background/50 via-background/30 to-background/50" />
       </div>
       
       {/* Main content with proper z-index to appear above background */}

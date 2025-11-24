@@ -13,7 +13,7 @@ function SkillBar({ name, level }: { name: string; level: number }) {
         <span className="text-sm text-muted-foreground font-mono">{level}%</span>
       </div>
       <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-        <div className="bg-gradient-to-r from-primary to-accent h-2 rounded-full transition-all duration-1000 hover:shadow-lg hover:shadow-primary/25" style={{ width: `${level}%` }} />
+        <div className="bg-linear-to-r from-primary to-accent h-2 rounded-full transition-all duration-1000 hover:shadow-lg hover:shadow-primary/25" style={{ width: `${level}%` }} />
       </div>
     </div>
   )
