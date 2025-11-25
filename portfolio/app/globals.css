@@ -45,6 +45,25 @@
   color-scheme: dark;
 }
 
+body {
+  overflow-x: hidden;
+}
+
+/* Hide scrollbar while maintaining scroll functionality */
+html {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+html::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+/* Add glow effect to all primary colored text for better readability */
+.text-primary {
+  text-shadow: 0 0 15px rgba(16, 185, 129, 0.5), 0 0 25px rgba(16, 185, 129, 0.3);
+}
+
 button:hover,
 a:hover,
 .hover-white:hover {
@@ -134,6 +153,19 @@ a:hover,
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* Custom Utilities */
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.animate-spin-slow {
+  animation: spin 15s linear infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -178,20 +210,22 @@ a:hover,
   }
 }
 
-/* Custom gradient text utility with fallback */
+/* Custom gradient text utility with fallback and glow - cream white for better contrast */
 @layer utilities {
   .gradient-text {
-    background: linear-gradient(to right, oklch(0.55 0.15 160), oklch(0.6 0.12 160), oklch(0.55 0.15 160));
+    background: linear-gradient(to right, #FFFEF2, #F0EAD6, #FFFEF2);
     -webkit-background-clip: text;
     background-clip: text;
+    text-shadow: 0 0 20px rgba(255, 254, 242, 0.8), 0 0 40px rgba(255, 254, 242, 0.5), 0 0 60px rgba(255, 254, 242, 0.3);
     -webkit-text-fill-color: transparent;
-    color: oklch(0.55 0.15 160); /* Fallback color */
+    color: #FFFEF2; /* Fallback color */
   }
 
   /* Ensure gradient text works in all browsers */
   @supports not (-webkit-background-clip: text) {
     .gradient-text {
-      color: oklch(0.55 0.15 160);
+      color: #FFFEF2;
+      text-shadow: 0 0 20px rgba(255, 254, 242, 0.8), 0 0 40px rgba(255, 254, 242, 0.5);
     }
   }
 

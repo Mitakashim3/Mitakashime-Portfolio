@@ -9,7 +9,7 @@ type Props = { scrollY: number; componentScale: number }
 
 export function Experience({ scrollY, componentScale }: Props) {
   return (
-    <section className="py-20 px-6 bg-muted/30 relative z-40" style={{ transform: `scale(${componentScale})` }}>
+    <section className="py-20 px-6 relative z-40" style={{ transform: `scale(${componentScale})` }}>
       <div className="max-w-4xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 gradient-text font-sans">Experience & Education</h2>
         <div className="space-y-8" style={{ transform: `translateY(${scrollY * 0.02}px)` }}>

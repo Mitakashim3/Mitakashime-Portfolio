@@ -10,9 +10,10 @@ import { SITE } from "@/constants/content"
 type Props = {
   activeSection: string
   onNavigate: (id: string) => void
+  visible?: boolean
 }
 
-export function Navbar({ activeSection, onNavigate }: Props) {
+export function Navbar({ activeSection, onNavigate, visible = true }: Props) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const handleNavigate = (id: string) => {
@@ -21,7 +22,15 @@ export function Navbar({ activeSection, onNavigate }: Props) {
   }
 
   return (
-    <nav className="fixed top-0 w-full bg-background/20 backdrop-blur-sm border-b border-border z-50">
+    <AnimatePresence>
+      {visible && (
+        <motion.nav
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -100, opacity: 0 }}
+          transition={{ duration: 0.5 }}
+          className="fixed top-0 w-full bg-background/20 backdrop-blur-sm border-b border-border z-50"
+        >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleNavigate("hero")}>
           <Image src="/MitakashimeLogo.svg" alt="Mitakashime Logo" width={48} height={48} className="sm:w-16 sm:h-16" />
@@ -85,6 +94,8 @@ export function Navbar({ activeSection, onNavigate }: Props) {
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+        </motion.nav>
+      )}
+    </AnimatePresence>
   )
 }

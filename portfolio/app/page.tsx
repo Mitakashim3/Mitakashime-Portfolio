@@ -48,16 +48,15 @@ export default function Portfolio() {
   const componentScale = 1 - squeezeIntensity * 0.05
 
   return (
-    <div className="min-h-screen bg-background text-foreground relative overflow-x-hidden">
+    <div className="min-h-screen bg-background text-foreground relative">
       {/* Fixed position galaxy background that spans the entire viewport */}
       <div className="fixed inset-0 w-full h-full z-0">
         <GalaxyBackground scrollY={scrollY} />
-        <div className="absolute inset-0 bg-linear-to-b from-background/50 via-background/30 to-background/50" />
       </div>
       
       {/* Main content with proper z-index to appear above background */}
       <div className="relative z-10">
-        <Navbar activeSection={activeSection} onNavigate={scrollToSection} />
+        <Navbar activeSection={activeSection} onNavigate={scrollToSection} visible={scrollY > 2000} />
         <Hero scrollY={scrollY} componentScale={componentScale} onScrollTo={scrollToSection} />
         <About scrollY={scrollY} componentScale={componentScale} />
         <Projects scrollY={scrollY} componentScale={componentScale} />
@@ -72,14 +71,33 @@ export default function Portfolio() {
         <div className="relative w-full h-full">
           <BlackHole />
         </div>
+        {/* 3D Model Attribution */}
+        <a 
+          href="https://sketchfab.com/3d-models/blackhole-74cbeaeae2174a218fe9455d77902b5c" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="absolute bottom-2 right-2 text-[10px] text-white/20 hover:text-white/50 transition-colors duration-300"
+          title="3D Model by rubykamen on Sketchfab"
+        >
+          3D: rubykamen
+        </a>
       </section>
 
       {/* Scroll to top button */}
       {scrollY > 500 && (
         <motion.button
           initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
+          animate={{ 
+            opacity: 1, 
+            scale: 1,
+            y: [0, -8, 0]
+          }}
           exit={{ opacity: 0, scale: 0 }}
+          transition={{
+            opacity: { duration: 0.2 },
+            scale: { duration: 0.2 },
+            y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+          }}
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className="fixed bottom-8 right-8 z-50 bg-primary/90 hover:bg-primary text-white p-3 rounded-full shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-110"
         >

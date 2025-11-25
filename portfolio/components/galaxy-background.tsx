@@ -69,6 +69,10 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
     )
   }
 
+  // Calculate scale based on scrollY for subtle zoom effect
+  // Only zoom during the hero sequence (0-2000px)
+  const scale = 1 + Math.min(scrollY, 2000) * 0.00015
+
   return (
     <>
       <video
@@ -77,21 +81,19 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
         autoPlay
         loop
         muted
-        playsInline
+        playsInPlace
         preload={capabilities.isMobile ? "none" : "metadata"} // Don't preload on mobile
         className="fixed inset-0 w-full h-full object-cover z-0 pointer-events-none"
         style={{
-          transform: capabilities.prefersReducedMotion
-            ? "scale(1.1)"
-            : `scale(1.1) translateY(${scrollY * 0.02}px)`,
+          transform: `scale(${scale})`,
           willChange: capabilities.isLowEnd ? "auto" : "transform", // Optimize for low-end devices
         }}
         // Reduce video size on mobile to improve performance
         width={capabilities.isMobile ? "720" : undefined}
         height={capabilities.isMobile ? "480" : undefined}
       />
-      {/* Gradient overlay for better text readability */}
-      <div className="fixed inset-0 bg-linear-to-b from-background/50 via-background/30 to-background/50 z-0 pointer-events-none" />
+      {/* Consistent dark overlay for uniform appearance across all sections */}
+      <div className="fixed inset-0 bg-black/40 z-0 pointer-events-none" />
     </>
   )
 }

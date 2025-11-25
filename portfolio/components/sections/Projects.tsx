@@ -9,7 +9,7 @@ type Props = { scrollY: number; componentScale: number }
 
 export function Projects({ scrollY, componentScale }: Props) {
   return (
-    <section id="projects" className="py-20 px-6 bg-muted/30 relative z-40" style={{ transform: `scale(${componentScale})` }}>
+    <section id="projects" className="py-20 px-6 relative z-40" style={{ transform: `scale(${componentScale})` }}>
       <div className="max-w-6xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 gradient-text font-sans">Featured Projects</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8" style={{ transform: `translateY(${scrollY * 0.02}px)` }}>
@@ -21,7 +21,7 @@ export function Projects({ scrollY, componentScale }: Props) {
             >
               <div className="aspect-video bg-muted rounded-t-lg overflow-hidden relative">
                 <img src={project.image || "/placeholder.svg"} alt={project.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-linear-to-t from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               </div>
               <CardContent className="p-6">
                 <h3 className="text-xl font-semibold mb-2 group-hover:text-primary transition-colors duration-300 font-sans">{project.title}</h3>
