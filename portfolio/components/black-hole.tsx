@@ -175,11 +175,13 @@ export function BlackHole({ zoom = 60 }: { zoom?: number }) {
         <CameraSetup zoom={1.3} />
         <OrbitControls 
           enablePan={false} 
-          enableZoom={!capabilities.isMobile} // Disable zoom on mobile to prevent conflicts with pinch gestures
+          enableZoom={true} // Enable zoom on all devices including mobile
           enableRotate={true}
           rotateSpeed={capabilities.isMobile ? 0.5 : 1}
           enableDamping={!capabilities.isLowEnd}
           dampingFactor={0.05}
+          minDistance={2}
+          maxDistance={10}
         />
       </Canvas>
     </div>

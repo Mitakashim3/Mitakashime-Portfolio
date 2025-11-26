@@ -29,7 +29,7 @@ export function Navbar({ activeSection, onNavigate, visible = true }: Props) {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -100, opacity: 0 }}
           transition={{ duration: 0.5 }}
-          className="fixed top-0 w-full bg-background/20 backdrop-blur-sm border-b border-border z-50"
+          className="fixed top-0 w-full bg-background/20 backdrop-blur-sm border-b border-border z-[100]"
         >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleNavigate("hero")}>
@@ -58,7 +58,7 @@ export function Navbar({ activeSection, onNavigate, visible = true }: Props) {
         {/* Mobile Hamburger Button */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
-          className="md:hidden text-primary hover:text-primary/80 transition-colors p-2 touch-manipulation"
+          className="md:hidden text-primary hover:text-primary/80 transition-colors p-4 -mr-4 touch-manipulation relative z-[101]"
           aria-label="Toggle menu"
         >
           {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
