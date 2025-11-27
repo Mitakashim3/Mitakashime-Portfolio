@@ -25,7 +25,7 @@ export const PROJECTS: Project[] = [
       "Render"
     ],
     image: "/PolyconProject.png",
-    images: ["/PolyconProject.png", "/PolyconProject.png", "/PolyconProject.png"],
+    images: ["/PolyconProject.png", "/PolyconProject1.png", "/PolyconProject2.png"],
     href: "",
   },
   {
@@ -69,6 +69,27 @@ export const PROJECTS: Project[] = [
     images: ["/PortnerateProject.jpg", "/PortnerateProject.jpg", "/PortnerateProject.jpg"],
     href: "",
   },
+  {
+  "title": "OptiPOS",
+  "description": "A full-stack Point of Sale (POS) desktop application built for retail businesses. Features offline-first architecture with local SQLite storage that syncs to cloud PostgreSQL, JWT-based authentication with role management (admin/manager/cashier), real-time inventory tracking, transaction history with analytics dashboard, and automated cloud deployment. Designed for reliability in low-connectivity environments while maintaining data consistency across devices.",
+  "tech": [
+    "Tauri",
+    "React",
+    "TypeScript",
+    "Tailwind CSS",
+    "Rust",
+    "Go (Gin)",
+    "SQLite",
+    "PostgreSQL",
+    "JWT Authentication",
+    "Docker",
+    "Render (Cloud Hosting)",
+    "GitHub Actions (CI/CD)"
+  ],
+  "image": "/OptiPOSProject.jpg",
+  "images": ["/OptiPOSProject.png", "/OptiPOSProject1.png", "/OptiPOSProjectCashier.png"],
+  "href": "https://github.com/Mitakashim3/MItakashime-POS"
+}
 ]
 
 
