@@ -7,18 +7,16 @@ import { ArrowUp } from "lucide-react"
 // Dynamic import client-only heavy components to avoid SSR/client markup mismatch
 const BlackHole = dynamic(() => import("@/components/black-hole").then((m) => m.BlackHole), { ssr: false })
 const GalaxyBackground = dynamic(() => import("@/components/galaxy-background").then((m) => m.GalaxyBackground), { ssr: false })
-import { Navbar } from "@/components/sections/Navbar"
+import { ContactSlider } from "@/components/sections/ContactSlider"
 import { Hero } from "@/components/sections/Hero"
 import { About } from "@/components/sections/About"
 import { Projects } from "@/components/sections/Projects"
 import { Skills } from "@/components/sections/Skills"
 import { Experience } from "@/components/sections/Experience"
 import { Contact } from "@/components/sections/Contact"
-import { NAV_SECTIONS } from "@/constants/links"
 
 export default function Portfolio() {
   const [scrollY, setScrollY] = useState(0)
-  const [activeSection, setActiveSection] = useState("")
 
   useEffect(() => {
     document.documentElement.classList.add("dark")
@@ -27,13 +25,6 @@ export default function Portfolio() {
   useEffect(() => {
     const handleScroll = () => {
       setScrollY(window.scrollY)
-      const currentSection = NAV_SECTIONS.find((section) => {
-        const element = document.getElementById(section)
-        if (!element) return false
-        const rect = element.getBoundingClientRect()
-        return rect.top <= 100 && rect.bottom >= 100
-      })
-      setActiveSection((currentSection as string) || "")
     }
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
@@ -54,9 +45,11 @@ export default function Portfolio() {
         <GalaxyBackground scrollY={scrollY} />
       </div>
       
+      {/* Contact Slider - replaces Navbar */}
+      <ContactSlider />
+      
       {/* Main content with proper z-index to appear above background */}
       <div className="relative z-10">
-        <Navbar activeSection={activeSection} onNavigate={scrollToSection} visible={scrollY > 2000} />
         <Hero scrollY={scrollY} componentScale={componentScale} onScrollTo={scrollToSection} />
         <About scrollY={scrollY} componentScale={componentScale} />
         <Projects scrollY={scrollY} componentScale={componentScale} />

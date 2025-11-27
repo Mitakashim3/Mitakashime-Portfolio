@@ -1,0 +1,180 @@
+{
+    "asset": {
+        "version": "2.0",
+        "generator": "Open Asset Import Library (assimp v5.4.0)"
+    },
+    "extensionsUsed": [
+        "KHR_materials_volume",
+        "FB_ngon_encoding"
+    ],
+    "accessors": [
+        {
+            "bufferView": 0,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 221529,
+            "type": "VEC3",
+            "max": [
+                127.05410766601563,
+                137.89999389648438,
+                19.599998474121094
+            ],
+            "min": [
+                -120.64128112792969,
+                -129.3000030517578,
+                0.0
+            ]
+        },
+        {
+            "bufferView": 1,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 221529,
+            "type": "VEC3",
+            "max": [
+                0.9988242983818054,
+                0.9991680383682251,
+                1.0
+            ],
+            "min": [
+                -0.9991647005081177,
+                -0.9988265037536621,
+                -1.0
+            ]
+        },
+        {
+            "bufferView": 2,
+            "byteOffset": 0,
+            "componentType": 5126,
+            "count": 221529,
+            "type": "VEC2",
+            "max": [
+                0.8176352977752686,
+                0.8460000157356262
+            ],
+            "min": [
+                0.19839678704738617,
+                0.17799997329711914
+            ]
+        },
+        {
+            "bufferView": 3,
+            "byteOffset": 0,
+            "componentType": 5125,
+            "count": 347208,
+            "type": "SCALAR",
+            "max": [
+                221528
+            ],
+            "min": [
+                0
+            ]
+        }
+    ],
+    "buffers": [
+        {
+            "byteLength": 8477760,
+            "uri": "MitakashimeLogo_0.bin"
+        }
+    ],
+    "bufferViews": [
+        {
+            "buffer": 0,
+            "byteOffset": 0,
+            "byteLength": 2658348,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 2658348,
+            "byteLength": 2658348,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 5316696,
+            "byteLength": 1772232,
+            "target": 34962
+        },
+        {
+            "buffer": 0,
+            "byteOffset": 7088928,
+            "byteLength": 1388832,
+            "target": 34963
+        }
+    ],
+    "images": [
+        {
+            "uri": "textures/image_0.png"
+        }
+    ],
+    "materials": [
+        {
+            "name": "Default Material",
+            "pbrMetallicRoughness": {
+                "baseColorTexture": {
+                    "index": 0
+                },
+                "baseColorFactor": [
+                    0.4019777774810791,
+                    0.4019777774810791,
+                    0.4019777774810791,
+                    1.0
+                ],
+                "metallicFactor": 0.30000001192092896,
+                "roughnessFactor": 0.44999998807907104
+            }
+        }
+    ],
+    "meshes": [
+        {
+            "name": "meshes[0]",
+            "primitives": [
+                {
+                    "mode": 4,
+                    "material": 0,
+                    "indices": 3,
+                    "attributes": {
+                        "POSITION": 0,
+                        "NORMAL": 1,
+                        "TEXCOORD_0": 2
+                    }
+                }
+            ]
+        }
+    ],
+    "nodes": [
+        {
+            "name": "MitakashimeLogo",
+            "children": [
+                1
+            ]
+        },
+        {
+            "name": "nodes[0]",
+            "mesh": 0
+        }
+    ],
+    "samplers": [
+        {
+            "wrapS": 33071,
+            "wrapT": 33071,
+            "magFilter": 9729,
+            "minFilter": 9987
+        }
+    ],
+    "scenes": [
+        {
+            "nodes": [
+                0
+            ]
+        }
+    ],
+    "textures": [
+        {
+            "source": 0,
+            "sampler": 0
+        }
+    ],
+    "scene": 0
+}

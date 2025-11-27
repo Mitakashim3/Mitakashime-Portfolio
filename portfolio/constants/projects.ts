@@ -3,12 +3,13 @@ export type Project = {
   description: string
   tech: string[]
   image: string
+  images?: string[]
   href?: string
 }
 
 export const PROJECTS: Project[] = [
   {
-    title: "POLYCON (Conqode)",
+    title: "POLYCON",
     description:
       "A cross-platform consultation system developed as a thesis project for streamlining manual consultation workflows. Features include descriptive analysis and an AI-driven minutes recorder to automatically transcribe and summarize meetings. Built collaboratively under the group name Develorant (now Conqode).",
     tech: [
@@ -24,6 +25,7 @@ export const PROJECTS: Project[] = [
       "Render"
     ],
     image: "/PolyconProject.png",
+    images: ["/PolyconProject.png", "/PolyconProject.png", "/PolyconProject.png"],
     href: "",
   },
   {
@@ -45,6 +47,7 @@ export const PROJECTS: Project[] = [
       "Gemini"
     ],
     image: "/EstatureProject.png",
+    images: ["/EstatureProject.png", "/EstatureProject.png", "/EstatureProject.png"],
     href: "",
   },
   {
@@ -63,6 +66,7 @@ export const PROJECTS: Project[] = [
       "Prisma"
     ],
     image: "/PortnerateProject.jpg",
+    images: ["/PortnerateProject.jpg", "/PortnerateProject.jpg", "/PortnerateProject.jpg"],
     href: "",
   },
 ]

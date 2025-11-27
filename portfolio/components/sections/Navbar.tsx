@@ -17,8 +17,14 @@ export function Navbar({ activeSection, onNavigate, visible = true }: Props) {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const handleNavigate = (id: string) => {
-    onNavigate(id)
+    // Close menu first, then navigate with a small delay to ensure smooth transition
     setIsMenuOpen(false)
+    setTimeout(() => {
+      const element = document.getElementById(id)
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "start" })
+      }
+    }, 100)
   }
 
   return (
@@ -73,22 +79,25 @@ export function Navbar({ activeSection, onNavigate, visible = true }: Props) {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3 }}
-            className="md:hidden bg-background/95 backdrop-blur-md border-b border-border overflow-hidden"
+            className="md:hidden bg-background/95 backdrop-blur-md border-b border-border overflow-hidden absolute top-full left-0 right-0 z-[102]"
           >
             <div className="flex flex-col px-4 py-3 space-y-1">
               {NAV_SECTIONS.map((id) => (
-                <motion.button
+                <button
                   key={id}
-                  onClick={() => handleNavigate(id)}
-                  className={`text-left py-3 px-4 rounded-md transition-all duration-300 font-mono touch-manipulation ${
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    handleNavigate(id)
+                  }}
+                  className={`text-left py-4 px-4 rounded-md transition-all duration-300 font-mono touch-manipulation active:scale-98 ${
                     activeSection === id
                       ? "text-primary bg-primary/10 border-l-4 border-primary"
-                      : "text-gray-400 hover:text-primary hover:bg-primary/5"
+                      : "text-gray-400 hover:text-primary hover:bg-primary/5 active:bg-primary/10"
                   }`}
-                  whileTap={{ scale: 0.98 }}
                 >
                   {id.charAt(0).toUpperCase() + id.slice(1)}
-                </motion.button>
+                </button>
               ))}
             </div>
           </motion.div>
