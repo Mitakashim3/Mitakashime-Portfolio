@@ -109,7 +109,7 @@ export const PROJECTS: Project[] = [
   ],
   "image": "/KalagProject.jpg",
   "images": ["/KalagDashboard.png", "/KalagSearch.png", "/KalagUpload.png"],
-  "href": "https://github.com/Mitakashim3/Kalag"
+  "href": "https://kalag.vercel.app/"
 },
 {
   "title": "Resibilis",
@@ -127,7 +127,7 @@ export const PROJECTS: Project[] = [
     "Vercel"
   ],
   "image": "/ResibilisProject.jpg",
-  "images": ["/ResibilisDashboard.png", "/ResibilisInvoice.png", "/ResibilisMobile.png"],
+  "images": ["/ResibilisDashboard.png", "/ResibilisDashboard2.png", "/ResibilisCatalog.png"],
   "href": "https://resibilis.vercel.app/"
 }
 ]
