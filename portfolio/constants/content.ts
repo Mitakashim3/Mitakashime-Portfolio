@@ -43,6 +43,13 @@ export const EXPERIENCE: ExperienceEntry[] = [
       "Developed responsive web applications using React and TypeScript. Collaborated with design team to implement pixel-perfect UI components and improved application performance by 30%.",
   },
   {
+    title: "LiDAR Annotator",
+    organization: "Remotasks (Whale Keypoints)",
+    period: "2021 - 2022",
+    description:
+      "Specialized in precise LiDAR data annotation for autonomous vehicle systems. Annotated 3D point cloud data to identify and label whale keypoints with high accuracy. Contributed to machine learning datasets used for AI training, ensuring quality standards and maintaining detailed documentation.",
+  },
+  {
     title: "Wordpress Certificate",
     organization: "Udemy",
     period: "2022",

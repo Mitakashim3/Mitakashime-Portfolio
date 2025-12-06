@@ -3,10 +3,10 @@
 import dynamic from "next/dynamic"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
-import { ArrowUp } from "lucide-react"
 // Dynamic import client-only heavy components to avoid SSR/client markup mismatch
 const BlackHole = dynamic(() => import("@/components/black-hole").then((m) => m.BlackHole), { ssr: false })
 const GalaxyBackground = dynamic(() => import("@/components/galaxy-background").then((m) => m.GalaxyBackground), { ssr: false })
+const Rocket3D = dynamic(() => import("@/components/rocket-3d"), { ssr: false })
 import { ContactSlider } from "@/components/sections/ContactSlider"
 import { Hero } from "@/components/sections/Hero"
 import { About } from "@/components/sections/About"
@@ -14,9 +14,12 @@ import { Projects } from "@/components/sections/Projects"
 import { Skills } from "@/components/sections/Skills"
 import { Experience } from "@/components/sections/Experience"
 import { Contact } from "@/components/sections/Contact"
+import { Preloader } from "@/components/preloader"
 
 export default function Portfolio() {
   const [scrollY, setScrollY] = useState(0)
+  const [isHovered, setIsHovered] = useState(false)
+  const [isLaunching, setIsLaunching] = useState(false)
 
   useEffect(() => {
     document.documentElement.classList.add("dark")
@@ -40,6 +43,7 @@ export default function Portfolio() {
 
   return (
     <div className="min-h-screen bg-background text-foreground relative">
+      <Preloader />
       {/* Fixed position galaxy background that spans the entire viewport */}
       <div className="fixed inset-0 w-full h-full z-0">
         <GalaxyBackground scrollY={scrollY} />
@@ -76,28 +80,33 @@ export default function Portfolio() {
         </a>
       </section>
 
-      {/* Scroll to top button */}
-      {scrollY > 500 && (
-        <motion.button
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ 
-            opacity: 1, 
-            scale: 1,
-            y: [0, -8, 0]
-          }}
-          exit={{ opacity: 0, scale: 0 }}
-          transition={{
-            opacity: { duration: 0.2 },
-            scale: { duration: 0.2 },
-            y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-          }}
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="fixed bottom-8 right-8 z-50 bg-primary/90 hover:bg-primary text-white p-3 rounded-full shadow-lg hover:shadow-primary/25 transition-all duration-300 hover:scale-110"
-        >
-          <ArrowUp className="h-5 w-5" />
-        </motion.button>
-      )}
+      {/* Scroll to top button - Always rendered but hidden to prevent mount lag */}
+      <motion.button
+        initial={{ opacity: 0, scale: 0, y: 100 }}
+        animate={{ 
+          opacity: scrollY > 500 ? 1 : 0,
+          scale: scrollY > 500 ? 1 : 0,
+          y: scrollY > 500 ? [0, -8, 0] : 100,
+          pointerEvents: scrollY > 500 ? "auto" : "none"
+        }}
+        transition={{
+          opacity: { duration: 0.2 },
+          scale: { duration: 0.2 },
+          y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+        }}
+        onClick={() => {
+          setIsLaunching(true)
+          window.scrollTo({ top: 0, behavior: "smooth" })
+          setTimeout(() => setIsLaunching(false), 900)
+        }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+        className="fixed bottom-8 right-8 z-50 w-24 h-56 flex items-center justify-center cursor-pointer p-0 bg-transparent"
+      >
+        <div className="w-full h-full relative z-10 pointer-events-none">
+            <Rocket3D isHovered={isHovered} isLaunching={isLaunching} />
+        </div>
+      </motion.button>
     </div>
   )
 }
-
