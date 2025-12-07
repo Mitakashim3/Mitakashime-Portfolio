@@ -42,7 +42,7 @@ function SkillItem({ name, level, index }: { name: string; level: number; index:
       </div>
       <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden backdrop-blur-sm">
         <div 
-          className="skill-bar-fill bg-gradient-to-r from-primary to-primary/60 h-full rounded-full relative shadow-[0_0_15px_rgba(var(--primary),0.5)]"
+          className="skill-bar-fill bg-linear-to-r from-primary to-primary/60 h-full rounded-full relative shadow-[0_0_15px_rgba(var(--primary),0.5)]"
           data-level={level}
           style={{ width: "0%" }}
         >

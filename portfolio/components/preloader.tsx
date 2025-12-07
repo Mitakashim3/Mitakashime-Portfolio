@@ -106,7 +106,7 @@ export function Preloader() {
   return (
     <div 
       ref={containerRef}
-      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#050505] text-white perspective-1000"
+      className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-[#050505] text-white perspective-1000"
       style={{ perspective: "1000px" }}
     >
       <div 

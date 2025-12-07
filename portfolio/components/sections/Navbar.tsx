@@ -35,7 +35,7 @@ export function Navbar({ activeSection, onNavigate, visible = true }: Props) {
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: -100, opacity: 0 }}
           transition={{ duration: 0.5 }}
-          className="fixed top-0 w-full bg-background/20 backdrop-blur-sm border-b border-border z-[100]"
+          className="fixed top-0 w-full bg-background/20 backdrop-blur-sm border-b border-border z-100"
         >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-2 cursor-pointer" onClick={() => handleNavigate("hero")}>

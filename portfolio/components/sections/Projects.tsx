@@ -113,7 +113,7 @@ export function Projects({ scrollY, componentScale }: Props) {
     <section ref={containerRef} className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden">
       {/* Header - Fixed at top of the section */}
       <div className="absolute top-4 md:top-8 left-0 right-0 z-50 text-center px-4 pointer-events-none">
-        <h2 className="text-3xl md:text-5xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-b from-white to-white/60 drop-shadow-lg">
+        <h2 className="text-3xl md:text-5xl font-bold mb-2 bg-clip-text text-transparent bg-linear-to-b from-white to-white/60 drop-shadow-lg">
           Featured Projects
         </h2>
         <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto drop-shadow-md">
@@ -141,7 +141,7 @@ export function Projects({ scrollY, componentScale }: Props) {
               </div>
 
               {/* Content Section */}
-              <div className="w-full md:w-[30%] h-[55%] md:h-full p-6 md:p-8 flex flex-col bg-gradient-to-b from-white/5 to-transparent">
+              <div className="w-full md:w-[30%] h-[55%] md:h-full p-6 md:p-8 flex flex-col bg-linear-to-b from-white/5 to-transparent">
                 
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6">
@@ -155,7 +155,7 @@ export function Projects({ scrollY, componentScale }: Props) {
                 </div>
 
                 {/* Title & Description */}
-                <div className="flex-grow overflow-y-auto custom-scrollbar pr-2">
+                <div className="grow overflow-y-auto custom-scrollbar pr-2 flex flex-col gap-4">
                   <h3 className="text-2xl md:text-3xl font-bold mb-4 text-white">
                     {project.title}
                   </h3>

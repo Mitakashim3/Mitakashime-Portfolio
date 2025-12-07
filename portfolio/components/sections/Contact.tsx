@@ -12,7 +12,7 @@ type Props = { scrollY: number; componentScale: number }
 
 export function Contact({ scrollY, componentScale }: Props) {
   return (
-    <section id="contact" className="py-20 px-6 relative z-40" style={{ transform: `scale(${componentScale})` }}>
+    <section id="contact" className="py-20 px-6 mb-20 relative z-40" style={{ transform: `scale(${componentScale})` }}>
       <div className="max-w-4xl mx-auto">
         <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 gradient-text font-sans">Get In Touch</h2>
         <div className="grid md:grid-cols-2 gap-12" style={{ transform: `translateY(${scrollY * 0.01}px)` }}>
