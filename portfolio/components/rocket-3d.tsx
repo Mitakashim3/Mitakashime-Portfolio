@@ -39,9 +39,9 @@ function RocketModel({ isHovered, isLaunching }: RocketModelProps) {
 
     // Entrance from below using smooth step
     if (!hasEntered.current) {
-      const progress = Math.min((time - startTime.current) / 1.1, 1)
+      const progress = Math.min((time - startTime.current) / 1.2, 1)
       const eased = progress * progress * (3 - 2 * progress) // smoothstep
-      const startY = -3
+      const startY = -5
       const endY = 0
       rocketRef.current.position.y = THREE.MathUtils.lerp(startY, endY, eased)
       rocketRef.current.rotation.y += delta * 0.5
@@ -54,9 +54,9 @@ function RocketModel({ isHovered, isLaunching }: RocketModelProps) {
 
     // Launch animation: accelerate upward and spin faster
     if (isLaunching) {
-      launchVelocity.current = THREE.MathUtils.lerp(launchVelocity.current, 12, delta * 3)
+      launchVelocity.current = THREE.MathUtils.lerp(launchVelocity.current, 20, delta * 4)
       rocketRef.current.position.y += launchVelocity.current * delta
-      rocketRef.current.rotation.y += delta * 6
+      rocketRef.current.rotation.y += delta * 8
       return
     } else {
       // Reset launch velocity when not launching
@@ -84,11 +84,12 @@ function RocketModel({ isHovered, isLaunching }: RocketModelProps) {
 
 export default function Rocket3D({ isHovered, isLaunching }: { isHovered: boolean; isLaunching: boolean }) {
   return (
-    <div className="w-full h-full relative">
+    <div className="w-full h-full relative overflow-visible">
       <Canvas 
         camera={{ position: [0, 0, 24], fov: 45 }} 
         gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }} 
         dpr={[1, 1.5]}
+        style={{ overflow: "visible" }}
       >
         <ambientLight intensity={1} />
         <directionalLight position={[5, 5, 5]} intensity={2} />

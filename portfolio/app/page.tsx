@@ -101,9 +101,9 @@ export default function Portfolio() {
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="fixed bottom-8 right-8 z-50 w-24 h-56 flex items-center justify-center cursor-pointer p-0 bg-transparent"
+        className="fixed bottom-0.5 right-3 z-50 w-32 h-[200vh] flex items-end justify-center cursor-pointer p-0 bg-transparent overflow-visible"
       >
-        <div className="w-full h-full relative z-10 pointer-events-none">
+        <div className="w-32 h-screen relative z-10 pointer-events-none overflow-visible">
             <Rocket3D isHovered={isHovered} isLaunching={isLaunching} />
         </div>
       </motion.button>
