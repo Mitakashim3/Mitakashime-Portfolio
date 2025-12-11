@@ -115,6 +115,7 @@ a:hover,
 @theme inline {
   --font-sans: var(--font-orbitron);
   --font-mono: var(--font-space-mono);
+  --font-family-sans: var(--font-orbitron), system-ui, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

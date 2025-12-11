@@ -44,7 +44,7 @@ export default function RootLayout({
         <link rel="shortcut icon" href="/MitakashimeLogo(B&W)Circle.svg" />
         <link rel="apple-touch-icon" href="/MitakashimeLogo(B&W)Circle.svg" />
       </head>
-      <body className={`font-sans ${orbitron.variable} ${spaceMono.variable} overflow-x-hidden touch-pan-y`}>
+      <body className={`${orbitron.variable} ${spaceMono.variable} overflow-x-hidden touch-pan-y`} style={{ fontFamily: 'var(--font-orbitron), sans-serif' }}>
         <Suspense fallback={<div className="min-h-screen flex items-center justify-center">Loading...</div>}>{children}</Suspense>
         <Analytics />
         <Toaster />
