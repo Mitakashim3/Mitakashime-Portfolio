@@ -54,7 +54,7 @@ function RocketModel({ isHovered, isLaunching }: RocketModelProps) {
 
     // Launch animation: accelerate upward and spin faster
     if (isLaunching) {
-      launchVelocity.current = THREE.MathUtils.lerp(launchVelocity.current, 20, delta * 4)
+      launchVelocity.current = THREE.MathUtils.lerp(launchVelocity.current, 28, delta * 4)
       rocketRef.current.position.y += launchVelocity.current * delta
       rocketRef.current.rotation.y += delta * 8
       return
@@ -86,15 +86,15 @@ export default function Rocket3D({ isHovered, isLaunching }: { isHovered: boolea
   return (
     <div className="w-full h-full relative overflow-visible">
       <Canvas 
-        camera={{ position: [0, 0, 24], fov: 45 }} 
+        camera={{ position: [0, 0, 23], fov: 45 }} 
         gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }} 
         dpr={[1, 1.5]}
         style={{ overflow: "visible" }}
       >
-        <ambientLight intensity={1} />
-        <directionalLight position={[5, 5, 5]} intensity={2} />
+        <ambientLight intensity={2} />
+        <directionalLight position={[2, 5, 2]} intensity={2} />
         {/* Environment is crucial for the metallic rocket to look real, not white/black */}
-        <Environment preset="city" />
+        <Environment preset="warehouse" />
         <Center>
           <RocketModel isHovered={isHovered} isLaunching={isLaunching} />
         </Center>
