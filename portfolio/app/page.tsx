@@ -96,7 +96,7 @@ export default function Portfolio() {
         }}
         onClick={() => {
           setIsLaunching(true)
-          scrollToSection("contact")
+          window.scrollTo({ top: 0, behavior: "smooth" })
           setTimeout(() => setIsLaunching(false), 900)
         }}
         onMouseEnter={() => setIsHovered(true)}
