@@ -106,15 +106,6 @@ export default function Portfolio() {
         <div className="w-28 h-screen relative z-10 pointer-events-none overflow-visible">
             <Rocket3D isHovered={isHovered} isLaunching={isLaunching} />
         </div>
-        
-        <motion.div
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : 20 }}
-          transition={{ duration: 0.2 }}
-          className="absolute bottom-8 right-20 whitespace-nowrap bg-black/80 backdrop-blur-md border border-primary/50 px-3 py-1.5 rounded-md text-primary font-[var(--font-orbitron)] text-xs tracking-widest shadow-[0_0_10px_rgba(0,255,0,0.2)] pointer-events-none"
-        >
-          CONTACT ME?
-        </motion.div>
       </motion.button>
     </div>
   )
