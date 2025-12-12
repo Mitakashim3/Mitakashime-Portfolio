@@ -89,8 +89,8 @@ export function Contact({ scrollY, componentScale }: Props) {
         <div className="grid md:grid-cols-2 gap-12 items-start">
           <motion.div variants={itemVariants} className="space-y-8">
             <div>
-              <h3 className="text-2xl font-semibold mb-6 font-sans text-primary/90">Let's Connect</h3>
-              <AnimatedText className="text-lg mb-8 leading-relaxed font-mono text-muted-foreground">
+              <h3 className="text-2xl font-semibold mb-6 font-sans">Let's Connect</h3>
+              <AnimatedText className="text-lg mb-8 leading-relaxed font-mono">
                 I'm always interested in new opportunities, collaborations, and interesting projects. Whether you have a
                 question or just want to say hi, feel free to reach out across the digital galaxy!
               </AnimatedText>
