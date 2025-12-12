@@ -82,22 +82,20 @@ export default function Portfolio() {
 
       {/* Scroll to top button - Always rendered but hidden to prevent mount lag */}
       <motion.button
-        initial={{ opacity: 0, scale: 0, y: 100 }}
+        initial={{ opacity: 0, y: 100 }}
         animate={{ 
-          opacity: scrollY > 500 ? 1 : 0,
-          scale: scrollY > 500 ? 1 : 0,
-          y: scrollY > 500 ? [0, -8, 0] : 100,
+          opacity: (scrollY > 500 || isLaunching) ? 1 : 0,
+          y: (scrollY > 500 || isLaunching) ? [0, -8, 0] : 100,
           pointerEvents: scrollY > 500 ? "auto" : "none"
         }}
         transition={{
           opacity: { duration: 0.2 },
-          scale: { duration: 0.2 },
           y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
         }}
         onClick={() => {
           setIsLaunching(true)
           window.scrollTo({ top: 0, behavior: "smooth" })
-          setTimeout(() => setIsLaunching(false), 900)
+          setTimeout(() => setIsLaunching(false), 2500)
         }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}

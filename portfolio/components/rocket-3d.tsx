@@ -37,11 +37,11 @@ function RocketModel({ isHovered, isLaunching }: RocketModelProps) {
     const time = state.clock.elapsedTime
     if (startTime.current === null) startTime.current = time
 
-    // Entrance from below using smooth step
+    // Entrance from above using smooth step
     if (!hasEntered.current) {
       const progress = Math.min((time - startTime.current) / 1.2, 1)
       const eased = progress * progress * (3 - 2 * progress) // smoothstep
-      const startY = -5
+      const startY = 10 // Start from top
       const endY = 0
       rocketRef.current.position.y = THREE.MathUtils.lerp(startY, endY, eased)
       rocketRef.current.rotation.y += delta * 0.5
