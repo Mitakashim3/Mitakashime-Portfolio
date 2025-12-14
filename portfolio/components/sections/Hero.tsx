@@ -99,7 +99,7 @@ export function Hero({ scrollY, componentScale, onScrollTo }: Props) {
             animate="visible"
             exit="exit"
             variants={containerVariants(0.05)}
-            className="text-6xl md:text-8xl font-bold font-sans w-full text-center absolute text-[#FFFEF2] drop-shadow-[0_0_15px_rgba(255,254,242,0.7)]"
+            className="text-4xl sm:text-6xl md:text-8xl font-bold font-sans w-full text-center absolute text-[#FFFEF2] drop-shadow-[0_0_15px_rgba(255,254,242,0.7)]"
             style={{ position: "absolute" }}
           >
             <AnimatedText text="Hi There!" variants={slideInVariants} />
@@ -113,7 +113,7 @@ export function Hero({ scrollY, componentScale, onScrollTo }: Props) {
             animate="visible"
             exit="exit"
             variants={containerVariants(0.08)}
-            className="text-6xl md:text-8xl font-bold font-sans w-full text-center absolute text-[#FFFEF2] drop-shadow-[0_0_15px_rgba(255,254,242,0.7)]"
+            className="text-4xl sm:text-6xl md:text-8xl font-bold font-sans w-full text-center absolute text-[#FFFEF2] drop-shadow-[0_0_15px_rgba(255,254,242,0.7)]"
             style={{ position: "absolute" }}
           >
             <AnimatedText text="Welcome!" variants={fadeInVariants} />
@@ -127,7 +127,7 @@ export function Hero({ scrollY, componentScale, onScrollTo }: Props) {
             animate="visible"
             exit="exit"
             variants={containerVariants(0.06)}
-            className="text-5xl md:text-7xl font-bold font-sans text-center w-full absolute text-[#FFFEF2] drop-shadow-[0_0_15px_rgba(255,254,242,0.7)]"
+            className="text-3xl sm:text-5xl md:text-7xl font-bold font-sans text-center w-full absolute text-[#FFFEF2] drop-shadow-[0_0_15px_rgba(255,254,242,0.7)]"
             style={{ position: "absolute" }}
           >
             <AnimatedText text="I'm Clark Jim Gabiota" variants={bounceInVariants} />
@@ -141,7 +141,7 @@ export function Hero({ scrollY, componentScale, onScrollTo }: Props) {
             animate="visible"
             exit="exit"
             variants={containerVariants(0.04)}
-            className="text-4xl md:text-6xl font-bold font-sans text-center px-4 w-full absolute text-[#FFFEF2] drop-shadow-[0_0_15px_rgba(255,254,242,0.7)]"
+            className="text-2xl sm:text-4xl md:text-6xl font-bold font-sans text-center px-4 w-full absolute text-[#FFFEF2] drop-shadow-[0_0_15px_rgba(255,254,242,0.7)]"
             style={{ position: "absolute" }}
           >
             <AnimatedText text="You can call me Mitakashime!" variants={rotateInVariants} />

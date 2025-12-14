@@ -42,7 +42,7 @@ export function Contact({ scrollY, componentScale }: Props) {
     <section 
       id="contact" 
       ref={containerRef}
-      className="py-20 px-6 mb-20 relative z-40 overflow-hidden" 
+      className="py-14 sm:py-20 px-4 sm:px-6 mb-14 sm:mb-20 relative z-40 overflow-hidden" 
       style={{ transform: `scale(${componentScale})` }}
     >
       {/* Background Effects */}
@@ -80,17 +80,17 @@ export function Contact({ scrollY, componentScale }: Props) {
       >
         <motion.h2 
           variants={itemVariants}
-          className="text-3xl md:text-5xl font-bold text-center mb-16 gradient-text font-sans tracking-tight"
+          className="text-2xl sm:text-3xl md:text-5xl font-bold text-center mb-10 sm:mb-16 gradient-text font-sans tracking-tight"
           style={{ textShadow: "0 0 30px rgba(255, 254, 242, 0.3)" }}
         >
           Get In Touch
         </motion.h2>
 
-        <div className="grid md:grid-cols-2 gap-12 items-start">
+        <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-start">
           <motion.div variants={itemVariants} className="space-y-8">
             <div>
-              <h3 className="text-2xl font-semibold mb-6 font-sans">Let's Connect</h3>
-              <AnimatedText className="text-lg mb-8 leading-relaxed font-mono">
+              <h3 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6 font-sans">Let's Connect</h3>
+              <AnimatedText className="text-base sm:text-lg mb-6 sm:mb-8 leading-relaxed font-mono">
                 I'm always interested in new opportunities, collaborations, and interesting projects. Whether you have a
                 question or just want to say hi, feel free to reach out across the digital galaxy!
               </AnimatedText>
@@ -101,12 +101,12 @@ export function Contact({ scrollY, componentScale }: Props) {
                 href={`mailto:${LINKS.email}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-4 p-4 rounded-lg bg-card/30 border border-primary/10 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group"
+                className="flex items-center gap-4 p-3 sm:p-4 rounded-lg bg-card/30 border border-primary/10 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group"
               >
-                <div className="p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                  <Mail className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
+                <div className="p-2.5 sm:p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                  <Mail className="h-5 w-5 sm:h-6 sm:w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
                 </div>
-                <span className="font-mono text-sm md:text-base group-hover:text-primary transition-colors duration-300">
+                <span className="font-mono text-sm sm:text-base group-hover:text-primary transition-colors duration-300">
                   {LINKS.email}
                 </span>
               </a>
@@ -115,12 +115,12 @@ export function Contact({ scrollY, componentScale }: Props) {
                 href={LINKS.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-4 p-4 rounded-lg bg-card/30 border border-primary/10 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group"
+                className="flex items-center gap-4 p-3 sm:p-4 rounded-lg bg-card/30 border border-primary/10 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group"
               >
-                <div className="p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                  <Github className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
+                <div className="p-2.5 sm:p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                  <Github className="h-5 w-5 sm:h-6 sm:w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
                 </div>
-                <span className="font-mono text-sm md:text-base group-hover:text-primary transition-colors duration-300">
+                <span className="font-mono text-sm sm:text-base group-hover:text-primary transition-colors duration-300">
                   GitHub - Mitakashim3
                 </span>
               </a>
@@ -129,12 +129,12 @@ export function Contact({ scrollY, componentScale }: Props) {
                 href={`https://${LINKS.linkedin.replace(/^https?:\/\//, "")}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-4 p-4 rounded-lg bg-card/30 border border-primary/10 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group"
+                className="flex items-center gap-4 p-3 sm:p-4 rounded-lg bg-card/30 border border-primary/10 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group"
               >
-                <div className="p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
-                  <Linkedin className="h-6 w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
+                <div className="p-2.5 sm:p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
+                  <Linkedin className="h-5 w-5 sm:h-6 sm:w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
                 </div>
-                <span className="font-mono text-sm md:text-base group-hover:text-primary transition-colors duration-300">
+                <span className="font-mono text-sm sm:text-base group-hover:text-primary transition-colors duration-300">
                   LinkedIn - Clark Jim Gabiota
                 </span>
               </a>
@@ -142,7 +142,7 @@ export function Contact({ scrollY, componentScale }: Props) {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="p-8 border-primary/20 bg-black/40 backdrop-blur-md shadow-[0_0_50px_-12px_rgba(0,255,0,0.1)] hover:shadow-[0_0_50px_-12px_rgba(0,255,0,0.2)] transition-all duration-500">
+            <Card className="p-5 sm:p-8 border-primary/20 bg-black/40 backdrop-blur-md shadow-[0_0_50px_-12px_rgba(0,255,0,0.1)] hover:shadow-[0_0_50px_-12px_rgba(0,255,0,0.2)] transition-all duration-500">
               <form
                 className="space-y-6"
                 onSubmit={async (e) => {
@@ -171,7 +171,7 @@ export function Contact({ scrollY, componentScale }: Props) {
                   <Input 
                     placeholder="Your Name" 
                     required 
-                    className="bg-background/50 border-primary/20 focus:border-primary/80 h-12 font-mono transition-all duration-300" 
+                    className="bg-background/50 border-primary/20 focus:border-primary/80 h-11 sm:h-12 font-mono transition-all duration-300" 
                   />
                 </div>
                 <div className="space-y-2">
@@ -179,19 +179,19 @@ export function Contact({ scrollY, componentScale }: Props) {
                     type="email" 
                     placeholder="Your Email" 
                     required 
-                    className="bg-background/50 border-primary/20 focus:border-primary/80 h-12 font-mono transition-all duration-300" 
+                    className="bg-background/50 border-primary/20 focus:border-primary/80 h-11 sm:h-12 font-mono transition-all duration-300" 
                   />
                 </div>
                 <div className="space-y-2">
                   <Textarea 
                     placeholder="Your Message" 
                     required 
-                    className="bg-background/50 border-primary/20 focus:border-primary/80 min-h-[150px] resize-none font-mono transition-all duration-300" 
+                    className="bg-background/50 border-primary/20 focus:border-primary/80 min-h-[120px] sm:min-h-[150px] resize-none font-mono transition-all duration-300" 
                   />
                 </div>
                 <Button 
                   type="submit" 
-                  className="w-full h-12 bg-primary hover:bg-primary/90 text-black font-bold text-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-[0_0_20px_rgba(0,255,0,0.3)] hover:shadow-[0_0_30px_rgba(0,255,0,0.5)]"
+                  className="w-full h-11 sm:h-12 bg-primary hover:bg-primary/90 text-black font-bold text-base sm:text-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-[0_0_20px_rgba(0,255,0,0.3)] hover:shadow-[0_0_30px_rgba(0,255,0,0.5)]"
                 >
                   <Send className="w-5 h-5 mr-2" />
                   Send Message

@@ -46,7 +46,7 @@ export function About({ scrollY, componentScale }: Props) {
     <section 
       id="about" 
       ref={containerRef}
-      className="py-20 px-6 relative z-40 overflow-hidden" 
+      className="py-14 sm:py-20 px-4 sm:px-6 relative z-40 overflow-hidden" 
       style={{ transform: `scale(${componentScale})` }}
     >
       {/* Background Effects */}
@@ -87,7 +87,7 @@ export function About({ scrollY, componentScale }: Props) {
           <div className="space-y-6 order-2 md:order-1">
             <motion.h2 
               variants={itemVariants}
-              className="text-3xl md:text-5xl font-bold mb-6 gradient-text font-sans tracking-tight"
+              className="text-2xl sm:text-3xl md:text-5xl font-bold mb-6 gradient-text font-sans tracking-tight"
               style={{ textShadow: "0 0 30px rgba(255, 254, 242, 0.3)" }}
             >
               About Me
@@ -96,7 +96,7 @@ export function About({ scrollY, componentScale }: Props) {
             <div className="space-y-4">
               {ABOUT.paragraphs.map((p, idx) => (
                 <div key={idx} className="mb-4">
-                  <AnimatedText className="text-lg leading-relaxed font-mono text-[#FFFEF2] drop-shadow-[0_0_10px_rgba(255,254,242,0.5)]">
+                  <AnimatedText className="text-base sm:text-lg leading-relaxed font-mono text-[#FFFEF2] drop-shadow-[0_0_10px_rgba(255,254,242,0.5)]">
                     {p}
                   </AnimatedText>
                 </div>
@@ -108,7 +108,7 @@ export function About({ scrollY, componentScale }: Props) {
           {/* Avatar / 3D Pop-out Effect */}
           <div className="flex justify-center order-1 md:order-2 relative">
             <motion.div 
-              className="relative w-80 h-80 md:w-96 md:h-96 group perspective-1000"
+              className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-96 md:h-96 group perspective-1000"
               initial={{ opacity: 0, scale: 0.8, rotateY: -30 }}
               whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
               transition={{ duration: 1, type: "spring" }}
@@ -117,7 +117,7 @@ export function About({ scrollY, componentScale }: Props) {
               <div className="absolute inset-10 bg-primary/20 rounded-full blur-3xl animate-pulse-slow" />
               
               {/* The Circle Frame */}
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-64 h-64 md:w-72 md:h-72 rounded-full border-[3px] border-primary/30 bg-black/40 backdrop-blur-sm shadow-[0_0_30px_rgba(0,255,0,0.1)] group-hover:border-primary/60 transition-colors duration-500 overflow-visible flex items-end justify-center z-10">
+              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-56 h-56 sm:w-64 sm:h-64 md:w-72 md:h-72 rounded-full border-[3px] border-primary/30 bg-black/40 backdrop-blur-sm shadow-[0_0_30px_rgba(0,255,0,0.1)] group-hover:border-primary/60 transition-colors duration-500 overflow-visible flex items-end justify-center z-10">
                 
                 {/* Inner Ring */}
                 <div className="absolute inset-2 rounded-full border border-primary/10" />
@@ -151,7 +151,7 @@ export function About({ scrollY, componentScale }: Props) {
 
               {/* Floating Elements */}
               <motion.div 
-                className="absolute -right-4 top-20 bg-card/80 backdrop-blur-md p-3 rounded-xl border border-primary/20 shadow-lg z-30"
+                className="hidden sm:block absolute -right-4 top-20 bg-card/80 backdrop-blur-md p-3 rounded-xl border border-primary/20 shadow-lg z-30"
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               >
@@ -159,7 +159,7 @@ export function About({ scrollY, componentScale }: Props) {
               </motion.div>
               
               <motion.div 
-                className="absolute -left-4 bottom-20 bg-card/80 backdrop-blur-md p-3 rounded-xl border border-primary/20 shadow-lg z-30"
+                className="hidden sm:block absolute -left-4 bottom-20 bg-card/80 backdrop-blur-md p-3 rounded-xl border border-primary/20 shadow-lg z-30"
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               >

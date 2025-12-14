@@ -27,9 +27,10 @@ export function useDeviceCapabilities(): DeviceCapabilities {
     // Check if running in browser
     if (typeof window === "undefined") return
 
-    // Mobile detection
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768
+    // Device detection
+    // Define tablet first, then ensure mobile excludes tablets.
     const isTablet = /iPad|Android/i.test(navigator.userAgent) && window.innerWidth >= 768 && window.innerWidth < 1024
+    const isMobile = (/iPhone|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768) && !isTablet
 
     // Low-end device detection (heuristic-based)
     const hardwareConcurrency = navigator.hardwareConcurrency || 2

@@ -3,6 +3,8 @@
 import dynamic from "next/dynamic"
 import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
+import { ArrowUp } from "lucide-react"
+import { useDeviceCapabilities } from "@/hooks/use-device-capabilities"
 // Dynamic import client-only heavy components to avoid SSR/client markup mismatch
 const BlackHole = dynamic(() => import("@/components/black-hole").then((m) => m.BlackHole), { ssr: false })
 const GalaxyBackground = dynamic(() => import("@/components/galaxy-background").then((m) => m.GalaxyBackground), { ssr: false })
@@ -18,8 +20,15 @@ import { Preloader } from "@/components/preloader"
 
 export default function Portfolio() {
   const [scrollY, setScrollY] = useState(0)
-  const [isHovered, setIsHovered] = useState(false)
   const [isLaunching, setIsLaunching] = useState(false)
+  const [isHovered, setIsHovered] = useState(false)
+  const [hasMounted, setHasMounted] = useState(false)
+  const capabilities = useDeviceCapabilities()
+
+  // Prevent loading heavy desktop-only UI before we know device capabilities.
+  useEffect(() => {
+    setHasMounted(true)
+  }, [])
 
   useEffect(() => {
     document.documentElement.classList.add("dark")
@@ -40,6 +49,9 @@ export default function Portfolio() {
   const maxScroll = 4000
   const squeezeIntensity = Math.min(1, scrollY / maxScroll)
   const componentScale = 1 - squeezeIntensity * 0.05
+
+  // Treat tablets as non-mobile for the rocket.
+  const isHandset = hasMounted ? (capabilities.isMobile && !capabilities.isTablet) : true
 
   return (
     <div className="min-h-screen bg-background text-foreground relative">
@@ -81,30 +93,55 @@ export default function Portfolio() {
       </section>
 
       {/* Scroll to top button - Always rendered but hidden to prevent mount lag */}
-      <motion.button
-        initial={{ opacity: 0, y: 100 }}
-        animate={{ 
-          opacity: (scrollY > 500 || isLaunching) ? 1 : 0,
-          y: (scrollY > 500 || isLaunching) ? [0, -8, 0] : 100,
-          pointerEvents: scrollY > 500 ? "auto" : "none"
-        }}
-        transition={{
-          opacity: { duration: 0.2 },
-          y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-        }}
-        onClick={() => {
-          setIsLaunching(true)
-          window.scrollTo({ top: 0, behavior: "smooth" })
-          setTimeout(() => setIsLaunching(false), 2500)
-        }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        className="fixed bottom-0.5 right-1 z-50 w-28 h-[50vh] flex items-end justify-center cursor-pointer p-0 bg-transparent overflow-visible"
-      >
-        <div className="w-28 h-screen relative z-10 pointer-events-none overflow-visible">
+      {isHandset ? (
+        <motion.button
+          initial={{ opacity: 0, y: 100 }}
+          animate={{ 
+            opacity: (scrollY > 500 || isLaunching) ? 1 : 0,
+            y: (scrollY > 500 || isLaunching) ? [0, -4, 0] : 100,
+            pointerEvents: scrollY > 500 ? "auto" : "none"
+          }}
+          transition={{
+            opacity: { duration: 0.2 },
+            y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+          }}
+          onClick={() => {
+            setIsLaunching(true)
+            window.scrollTo({ top: 0, behavior: "smooth" })
+            setTimeout(() => setIsLaunching(false), 2500)
+          }}
+          aria-label="Scroll to top"
+          className="fixed bottom-4 right-4 z-50 h-12 w-12 rounded-full bg-background/80 backdrop-blur-sm border border-primary/30 text-primary hover:bg-primary/20 transition-colors touch-manipulation flex items-center justify-center"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </motion.button>
+      ) : (
+        <motion.button
+          initial={{ opacity: 0, y: 100 }}
+          animate={{ 
+            opacity: (scrollY > 500 || isLaunching) ? 1 : 0,
+            y: (scrollY > 500 || isLaunching) ? [0, -8, 0] : 100,
+            pointerEvents: scrollY > 500 ? "auto" : "none"
+          }}
+          transition={{
+            opacity: { duration: 0.2 },
+            y: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+          }}
+          onClick={() => {
+            setIsLaunching(true)
+            window.scrollTo({ top: 0, behavior: "smooth" })
+            setTimeout(() => setIsLaunching(false), 2500)
+          }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          aria-label="Scroll to top"
+          className="fixed bottom-0.5 right-1 z-50 w-28 h-[50vh] flex items-end justify-center cursor-pointer p-0 bg-transparent overflow-visible"
+        >
+          <div className="w-28 h-screen relative z-10 pointer-events-none overflow-visible">
             <Rocket3D isHovered={isHovered} isLaunching={isLaunching} />
-        </div>
-      </motion.button>
+          </div>
+        </motion.button>
+      )}
     </div>
   )
 }

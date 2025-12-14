@@ -11,16 +11,20 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
   const [isVideoEnabled, setIsVideoEnabled] = useState(true)
   const capabilities = useDeviceCapabilities()
 
-  // Auto-disable video on mobile by default for performance
+  // Force a static background on mobile for performance/readability.
+  // (No video element mounted, no playback, just a static preview.)
+  const forceStaticBackground = capabilities.isMobile
+
+  // Auto-disable video on mobile (handsets) by default for performance
   useEffect(() => {
-    if (capabilities.isMobile || capabilities.isLowEnd) {
+    if (forceStaticBackground) {
       setIsVideoEnabled(false)
     }
-  }, [capabilities.isMobile, capabilities.isLowEnd])
+  }, [forceStaticBackground])
 
   // Lazy load video only when needed and with adaptive quality
   useEffect(() => {
-    if (!videoRef.current || !isVideoEnabled) return
+    if (forceStaticBackground || !videoRef.current || !isVideoEnabled) return
 
     const video = videoRef.current
 
@@ -47,11 +51,11 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
     observer.observe(video)
 
     return () => observer.disconnect()
-  }, [isVideoLoaded, capabilities, isVideoEnabled])
+  }, [isVideoLoaded, capabilities, isVideoEnabled, forceStaticBackground])
 
   // Pause video when not visible to save resources
   useEffect(() => {
-    if (!videoRef.current || !isVideoEnabled) return
+    if (forceStaticBackground || !videoRef.current || !isVideoEnabled) return
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
@@ -65,10 +69,11 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
 
     document.addEventListener("visibilitychange", handleVisibilityChange)
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange)
-  }, [isVideoEnabled])
+  }, [isVideoEnabled, forceStaticBackground])
 
   // Handle video toggle
   const toggleVideo = () => {
+    if (forceStaticBackground) return
     setIsVideoEnabled(prev => {
       if (!prev && videoRef.current) {
         // Re-enable: reload and play
@@ -100,10 +105,12 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
   // Only zoom during the hero sequence (0-2000px)
   const scale = 1 + Math.min(scrollY, 2000) * 0.00015
 
+  const showVideo = isVideoEnabled && !forceStaticBackground
+
   return (
     <>
       {/* Video Toggle Button - Only show on mobile/low-end devices */}
-      {(capabilities.isMobile || capabilities.isLowEnd) && (
+      {capabilities.isLowEnd && !forceStaticBackground && (
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -117,7 +124,7 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
       )}
 
       <AnimatePresence>
-        {isVideoEnabled ? (
+        {showVideo ? (
           <motion.video
             key="video"
             ref={videoRef}
@@ -125,19 +132,17 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            poster="/galaxy-poster.jpg"
+            poster="/galaxy-bg.jpg"
             autoPlay
             loop
             muted
             playsInline
-            preload={capabilities.isMobile ? "none" : "metadata"}
+            preload="metadata"
             className="fixed inset-0 w-full h-full object-cover z-0 pointer-events-none"
             style={{
               transform: `scale(${scale})`,
               willChange: capabilities.isLowEnd ? "auto" : "transform",
             }}
-            width={capabilities.isMobile ? "720" : undefined}
-            height={capabilities.isMobile ? "480" : undefined}
           />
         ) : (
           <motion.div
@@ -146,9 +151,9 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.5 }}
-            className="fixed inset-0 w-full h-full z-0 pointer-events-none bg-linear-to-b from-slate-950 via-slate-900 to-slate-950"
+            className="fixed inset-0 w-full h-full z-0 pointer-events-none bg-center bg-cover"
             style={{
-              backgroundImage: "radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.15) 0%, transparent 50%)",
+              backgroundImage: "url('/galaxy-bg.jpg')",
             }}
           />
         )}
