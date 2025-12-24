@@ -7,10 +7,10 @@ import { useGSAP } from "@gsap/react"
 import { PROJECTS } from "@/constants/projects"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ExternalLink, Github, FolderOpen } from "lucide-react"
+import { ExternalLink, Github, FolderOpen, ChevronLeft, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { motion } from "framer-motion"
+import { motion, AnimatePresence } from "framer-motion"
 import { useDeviceCapabilities } from "@/hooks/use-device-capabilities"
 import { useChromeVersion } from "@/hooks/use-chrome-version"
 
@@ -89,21 +89,41 @@ export const Projects = memo(function Projects({ scrollY, componentScale }: Prop
   const cardsRef = useRef<(HTMLDivElement | null)[]>([])
   const capabilities = useDeviceCapabilities()
   const chrome = useChromeVersion()
+  const [currentProjectIndex, setCurrentProjectIndex] = useState(0)
+
+  // Disable complex scroll animations on mobile - use carousel instead
+  const useMobileLayout = capabilities.isMobile || capabilities.isTablet
 
   // Adjust scrub speed based on device and Chrome version
   const scrubSpeed = useMemo(() => {
-    if (capabilities.isMobile) return 0.8 // Faster on mobile
+    if (capabilities.isMobile) return 0.8
     if (capabilities.isLowEnd) return 0.7
-    // Slower scrub for older Chrome versions for stability
     if (chrome.isChrome && chrome.version !== null && chrome.version < 100) return 0.8
     return 0.5
   }, [capabilities.isMobile, capabilities.isLowEnd, chrome.isChrome, chrome.version])
 
+  // Only use GSAP scroll animations on desktop
   useGSAP(() => {
+    if (useMobileLayout) {
+      // Clean up any existing ScrollTriggers on mobile
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.vars.trigger === containerRef.current) {
+          trigger.kill()
+        }
+      })
+      return
+    }
+
     const cards = cardsRef.current.filter(Boolean)
     if (!cards.length) return
 
-    // Create a master timeline for the stacking effect
+    // Clean up previous ScrollTriggers before creating new ones
+    ScrollTrigger.getAll().forEach(trigger => {
+      if (trigger.vars.trigger === containerRef.current) {
+        trigger.kill()
+      }
+    })
+
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: containerRef.current,
@@ -115,9 +135,8 @@ export const Projects = memo(function Projects({ scrollY, componentScale }: Prop
       }
     })
 
-    // Animate each card (except the last one) to slide up and reveal the next
     cards.forEach((card, i) => {
-      if (i === cards.length - 1) return // Last card stays visible
+      if (i === cards.length - 1) return
 
       tl.to(card, {
         yPercent: -120,
@@ -125,12 +144,174 @@ export const Projects = memo(function Projects({ scrollY, componentScale }: Prop
         opacity: 0,
         duration: 1,
         ease: "power2.inOut",
-        force3D: true, // GPU acceleration
+        force3D: true,
       }, ">-0.1")
     })
 
-  }, { scope: containerRef, dependencies: [scrubSpeed] })
+    return () => {
+      tl.kill()
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.vars.trigger === containerRef.current) {
+          trigger.kill()
+        }
+      })
+    }
 
+  }, { scope: containerRef, dependencies: [scrubSpeed, useMobileLayout] })
+
+  const nextProject = () => {
+    setCurrentProjectIndex((prev) => (prev + 1) % PROJECTS.length)
+  }
+
+  const prevProject = () => {
+    setCurrentProjectIndex((prev) => (prev - 1 + PROJECTS.length) % PROJECTS.length)
+  }
+
+  // Mobile: Horizontal swipeable carousel
+  if (useMobileLayout) {
+    return (
+      <section 
+        id="projects"
+        className="relative w-full min-h-screen flex items-center justify-center py-20 px-4 z-40"
+      >
+        <div className="w-full max-w-md mx-auto">
+          {/* Header */}
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-bold mb-2 text-white">
+              Featured Projects
+            </h2>
+            <p className="text-muted-foreground text-sm">
+              {currentProjectIndex + 1} of {PROJECTS.length}
+            </p>
+          </div>
+
+          {/* Carousel */}
+          <div className="relative">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentProjectIndex}
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.3 }}
+                className="bg-[#09090b] border border-white/10 rounded-2xl overflow-hidden shadow-2xl"
+              >
+                {/* Image */}
+                <div className="w-full h-56 relative bg-black/50 p-3">
+                  <ImageCarousel 
+                    images={PROJECTS[currentProjectIndex].images || [PROJECTS[currentProjectIndex].image]} 
+                    title={PROJECTS[currentProjectIndex].title} 
+                  />
+                </div>
+
+                {/* Content */}
+                <div className="p-6 space-y-4">
+                  {/* Badge */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-primary/80">
+                      <FolderOpen className="w-4 h-4" />
+                      <span className="text-xs font-mono">PROJECT {String(currentProjectIndex + 1).padStart(2, '0')}</span>
+                    </div>
+                    <Badge variant="outline" className="bg-white/5 border-white/10 text-xs">
+                      {PROJECTS[currentProjectIndex].tech[0]}
+                    </Badge>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-xl font-bold text-white">
+                    {PROJECTS[currentProjectIndex].title}
+                  </h3>
+
+                  {/* Description */}
+                  <p className="text-muted-foreground text-sm leading-relaxed line-clamp-3">
+                    {PROJECTS[currentProjectIndex].description}
+                  </p>
+
+                  {/* Tech Stack */}
+                  <div className="flex flex-wrap gap-2">
+                    {PROJECTS[currentProjectIndex].tech.slice(0, 4).map((tech) => (
+                      <span 
+                        key={tech} 
+                        className="px-2 py-1 rounded-md bg-white/5 border border-white/10 text-xs text-muted-foreground font-mono"
+                      >
+                        {tech}
+                      </span>
+                    ))}
+                    {PROJECTS[currentProjectIndex].tech.length > 4 && (
+                      <span className="px-2 py-1 text-xs text-muted-foreground">
+                        +{PROJECTS[currentProjectIndex].tech.length - 4} more
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="pt-4 flex gap-3">
+                    {PROJECTS[currentProjectIndex].href && (
+                      <Button asChild className="flex-1 bg-primary text-black hover:bg-primary/90 h-10">
+                        <Link href={PROJECTS[currentProjectIndex].href} target="_blank">
+                          <ExternalLink className="mr-2 h-4 w-4" />
+                          Demo
+                        </Link>
+                      </Button>
+                    )}
+                    <Button variant="outline" asChild className="flex-1 border-white/20 hover:bg-white/10 h-10">
+                      <Link href="https://github.com" target="_blank">
+                        <Github className="mr-2 h-4 w-4" />
+                        Code
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Navigation Arrows */}
+            <div className="flex justify-center items-center gap-4 mt-6">
+              <button
+                onClick={prevProject}
+                className="p-3 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                aria-label="Previous project"
+              >
+                <ChevronLeft className="w-5 h-5 text-white" />
+              </button>
+              
+              {/* Dots */}
+              <div className="flex gap-2">
+                {PROJECTS.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentProjectIndex(idx)}
+                    className={cn(
+                      "h-2 rounded-full transition-all",
+                      idx === currentProjectIndex 
+                        ? "w-8 bg-primary" 
+                        : "w-2 bg-white/20 hover:bg-white/40"
+                    )}
+                    aria-label={`Go to project ${idx + 1}`}
+                  />
+                ))}
+              </div>
+
+              <button
+                onClick={nextProject}
+                className="p-3 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 transition-colors"
+                aria-label="Next project"
+              >
+                <ChevronRight className="w-5 h-5 text-white" />
+              </button>
+            </div>
+
+            {/* Swipe instruction */}
+            <p className="text-center text-xs text-muted-foreground mt-4">
+              Swipe or use arrows to browse
+            </p>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  // Desktop: Pinned scroll stacking layout
   return (
     <section ref={containerRef} className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden">
       {/* Header - Fixed at top of the section */}
