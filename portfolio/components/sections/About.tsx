@@ -1,16 +1,20 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, useMemo, memo } from "react"
 import { motion, useScroll, useTransform, useInView } from "framer-motion"
 import { ABOUT } from "@/constants/content"
 import { AnimatedText } from "@/components/animated-text"
 import { cn } from "@/lib/utils"
+import { useDeviceCapabilities } from "@/hooks/use-device-capabilities"
+import { useChromeVersion } from "@/hooks/use-chrome-version"
 
 type Props = { scrollY: number; componentScale: number }
 
-export function About({ scrollY, componentScale }: Props) {
+export const About = memo(function About({ scrollY, componentScale }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(containerRef, { once: false, margin: "-100px" })
+  const capabilities = useDeviceCapabilities()
+  const chrome = useChromeVersion()
   
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -20,7 +24,14 @@ export function About({ scrollY, componentScale }: Props) {
   const y = useTransform(scrollYProgress, [0, 1], [50, -50])
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.9, 1], [0, 1, 1, 0])
 
-  const containerVariants = {
+  // Reduce particle count on mobile/low-end devices
+  const particleCount = useMemo(() => {
+    if (capabilities.isMobile) return 3
+    if (capabilities.isLowEnd) return 5
+    return 10
+  }, [capabilities.isMobile, capabilities.isLowEnd])
+
+  const containerVariants = useMemo(() => ({
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -28,9 +39,9 @@ export function About({ scrollY, componentScale }: Props) {
         staggerChildren: 0.2,
       },
     },
-  }
+  }), [])
 
-  const itemVariants = {
+  const itemVariants = useMemo(() => ({
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
@@ -40,7 +51,7 @@ export function About({ scrollY, componentScale }: Props) {
         ease: "easeOut",
       },
     },
-  }
+  }), [])
 
   return (
     <section 
@@ -51,7 +62,7 @@ export function About({ scrollY, componentScale }: Props) {
     >
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(10)].map((_, i) => (
+        {!capabilities.prefersReducedMotion && [...Array(particleCount)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-primary/40 rounded-full"
@@ -65,8 +76,9 @@ export function About({ scrollY, componentScale }: Props) {
               duration: 3 + Math.random() * 2,
               repeat: Infinity,
               delay: Math.random() * 5,
-              ease: "linear"
+              ease: "linear",
             }}
+            style={{ willChange: "transform, opacity" }}
             style={{
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
@@ -151,7 +163,10 @@ export function About({ scrollY, componentScale }: Props) {
 
               {/* Floating Elements */}
               <motion.div 
-                className="hidden sm:block absolute -right-4 top-20 bg-card/80 backdrop-blur-md p-3 rounded-xl border border-primary/20 shadow-lg z-30"
+                className={cn(
+                  "hidden sm:block absolute -right-4 top-20 p-3 rounded-xl border border-primary/20 shadow-lg z-30",
+                  chrome.supportsBackdropFilter ? "bg-card/80 backdrop-blur-md" : "bg-card"
+                )}
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               >
@@ -159,7 +174,10 @@ export function About({ scrollY, componentScale }: Props) {
               </motion.div>
               
               <motion.div 
-                className="hidden sm:block absolute -left-4 bottom-20 bg-card/80 backdrop-blur-md p-3 rounded-xl border border-primary/20 shadow-lg z-30"
+                className={cn(
+                  "hidden sm:block absolute -left-4 bottom-20 p-3 rounded-xl border border-primary/20 shadow-lg z-30",
+                  chrome.supportsBackdropFilter ? "bg-card/80 backdrop-blur-md" : "bg-card"
+                )}
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 5, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               >
@@ -172,7 +190,7 @@ export function About({ scrollY, componentScale }: Props) {
       </motion.div>
     </section>
   )
-}
+})
 
 
 

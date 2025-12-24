@@ -1,19 +1,20 @@
 "use client"
 
-import { useRef, useEffect, useState } from "react"
+import { useRef, useEffect, useState, memo, useMemo, useCallback } from "react"
 import { useDeviceCapabilities } from "@/hooks/use-device-capabilities"
+import { useChromeVersion } from "@/hooks/use-chrome-version"
 import { motion, AnimatePresence } from "framer-motion"
 import { Video, VideoOff } from "lucide-react"
 
-export function GalaxyBackground({ scrollY }: { scrollY: number }) {
+export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { scrollY: number }) {
   const videoRef = useRef<HTMLVideoElement>(null)
   const [isVideoLoaded, setIsVideoLoaded] = useState(false)
   const [isVideoEnabled, setIsVideoEnabled] = useState(true)
   const capabilities = useDeviceCapabilities()
+  const chrome = useChromeVersion()
 
-  // Force a static background on mobile for performance/readability.
-  // (No video element mounted, no playback, just a static preview.)
-  const forceStaticBackground = capabilities.isMobile
+  // Force a static background on mobile or older Chrome versions for performance
+  const forceStaticBackground = capabilities.isMobile || (chrome.isChrome && chrome.version !== null && chrome.version < 90)
 
   // Auto-disable video on mobile (handsets) by default for performance
   useEffect(() => {
@@ -71,8 +72,8 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange)
   }, [isVideoEnabled, forceStaticBackground])
 
-  // Handle video toggle
-  const toggleVideo = () => {
+  // Handle video toggle with useCallback for performance
+  const toggleVideo = useCallback(() => {
     if (forceStaticBackground) return
     setIsVideoEnabled(prev => {
       if (!prev && videoRef.current) {
@@ -87,7 +88,7 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
       }
       return !prev
     })
-  }
+  }, [forceStaticBackground])
 
   // Disable video for users who prefer reduced motion
   if (capabilities.prefersReducedMotion) {
@@ -101,9 +102,12 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
     )
   }
 
-  // Calculate scale based on scrollY for subtle zoom effect
+  // Use simpler animations for older Chrome versions
+  const animationDuration = chrome.shouldUseModernFeatures ? 0.5 : 0.3
+
+  // Calculate scale based on scrollY for subtle zoom effect - memoized
   // Only zoom during the hero sequence (0-2000px)
-  const scale = 1 + Math.min(scrollY, 2000) * 0.00015
+  const scale = useMemo(() => 1 + Math.min(scrollY, 2000) * 0.00015, [scrollY])
 
   const showVideo = isVideoEnabled && !forceStaticBackground
 
@@ -123,7 +127,7 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
         </motion.button>
       )}
 
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {showVideo ? (
           <motion.video
             key="video"
@@ -131,7 +135,7 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: animationDuration }}
             poster="/galaxy-bg.jpg"
             autoPlay
             loop
@@ -150,7 +154,7 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: animationDuration }}
             className="fixed inset-0 w-full h-full z-0 pointer-events-none bg-center bg-cover"
             style={{
               backgroundImage: "url('/galaxy-bg.jpg')",
@@ -163,4 +167,4 @@ export function GalaxyBackground({ scrollY }: { scrollY: number }) {
       <div className="fixed inset-0 bg-black/40 z-0 pointer-events-none" />
     </>
   )
-}
+})

@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, useInView } from "framer-motion"
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, memo } from "react"
 
 interface AnimatedTextProps {
   children: React.ReactNode
@@ -11,7 +11,7 @@ interface AnimatedTextProps {
 
 const JWT_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789._-"
 
-export function AnimatedText({ children, className = "", once = false }: AnimatedTextProps) {
+export const AnimatedText = memo(function AnimatedText({ children, className = "", once = false }: AnimatedTextProps) {
   const ref = useRef<HTMLDivElement>(null)
   const isInView = useInView(ref, { amount: 0.2, once })
   const [displayText, setDisplayText] = useState("")
@@ -74,8 +74,9 @@ export function AnimatedText({ children, className = "", once = false }: Animate
       initial={{ opacity: 0 }}
       animate={{ opacity: isInView ? 1 : 0 }}
       transition={{ duration: 0.5 }}
+      style={{ willChange: "opacity" }}
     >
       {displayText}
     </motion.div>
   )
-}
+})

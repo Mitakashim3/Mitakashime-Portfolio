@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, memo } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useGSAP } from "@gsap/react"
@@ -13,7 +13,7 @@ if (typeof window !== "undefined") {
 
 type Props = { scrollY: number; componentScale: number }
 
-export function Experience({ scrollY, componentScale }: Props) {
+export const Experience = memo(function Experience({ scrollY, componentScale }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
@@ -45,7 +45,8 @@ export function Experience({ scrollY, componentScale }: Props) {
           scale: 1,
           duration: 0.8,
           ease: "power2.out",
-          delay: i * 0.2 // 0.2s stagger between cards
+          delay: i * 0.2,
+          force3D: true,
         }
       )
 
@@ -57,9 +58,10 @@ export function Experience({ scrollY, componentScale }: Props) {
         {
           height: "100%",
           duration: 0.8,
-          ease: "power2.out"
+          ease: "power2.out",
+          force3D: true,
         },
-        0 // Start at same time as card animation
+        0
       )
     })
 
@@ -117,7 +119,7 @@ export function Experience({ scrollY, componentScale }: Props) {
       </div>
     </section>
   )
-}
+})
 
 
 

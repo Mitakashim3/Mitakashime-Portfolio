@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, memo, useMemo } from "react"
 import { motion, useInView } from "framer-motion"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -9,14 +9,26 @@ import { Button } from "@/components/ui/button"
 import { LINKS } from "@/constants/links"
 import { AnimatedText } from "@/components/animated-text"
 import { Github, Linkedin, Mail, Send } from "lucide-react"
+import { useDeviceCapabilities } from "@/hooks/use-device-capabilities"
+import { useChromeVersion } from "@/hooks/use-chrome-version"
+import { cn } from "@/lib/utils"
 
 type Props = { scrollY: number; componentScale: number }
 
-export function Contact({ scrollY, componentScale }: Props) {
+export const Contact = memo(function Contact({ scrollY, componentScale }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const isInView = useInView(containerRef, { once: false, margin: "-100px" })
+  const capabilities = useDeviceCapabilities()
+  const chrome = useChromeVersion()
 
-  const containerVariants = {
+  // Reduce particles on mobile/low-end
+  const particleCount = useMemo(() => {
+    if (capabilities.isMobile) return 5
+    if (capabilities.isLowEnd) return 8
+    return 15
+  }, [capabilities.isMobile, capabilities.isLowEnd])
+
+  const containerVariants = useMemo(() => ({
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -24,19 +36,18 @@ export function Contact({ scrollY, componentScale }: Props) {
         staggerChildren: 0.2,
       },
     },
-  }
+  }), [])
 
-  const itemVariants = {
+  const itemVariants = useMemo(() => ({
     hidden: { opacity: 0, y: 20 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
         duration: 0.8,
-        ease: "easeOut",
       },
     },
-  }
+  }), [])
 
   return (
     <section 
@@ -47,7 +58,7 @@ export function Contact({ scrollY, componentScale }: Props) {
     >
       {/* Background Effects */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {[...Array(15)].map((_, i) => (
+        {!capabilities.prefersReducedMotion && [...Array(particleCount)].map((_, i) => (
           <motion.div
             key={i}
             className="absolute w-1 h-1 bg-primary/40 rounded-full"
@@ -61,9 +72,10 @@ export function Contact({ scrollY, componentScale }: Props) {
               duration: 3 + Math.random() * 2,
               repeat: Infinity,
               delay: Math.random() * 5,
-              ease: "linear"
+              ease: "linear",
             }}
             style={{
+              willChange: "transform, opacity",
               left: `${Math.random() * 100}%`,
               top: `${Math.random() * 100}%`,
             }}
@@ -142,7 +154,10 @@ export function Contact({ scrollY, componentScale }: Props) {
           </motion.div>
 
           <motion.div variants={itemVariants}>
-            <Card className="p-5 sm:p-8 border-primary/20 bg-black/40 backdrop-blur-md shadow-[0_0_50px_-12px_rgba(0,255,0,0.1)] hover:shadow-[0_0_50px_-12px_rgba(0,255,0,0.2)] transition-all duration-500">
+            <Card className={cn(
+              "p-5 sm:p-8 border-primary/20 shadow-[0_0_50px_-12px_rgba(0,255,0,0.1)] hover:shadow-[0_0_50px_-12px_rgba(0,255,0,0.2)] transition-all duration-500",
+              chrome.supportsBackdropFilter ? "bg-black/40 backdrop-blur-md" : "bg-black/90"
+            )}>
               <form
                 className="space-y-6"
                 onSubmit={async (e) => {
@@ -203,7 +218,7 @@ export function Contact({ scrollY, componentScale }: Props) {
       </motion.div>
     </section>
   )
-}
+})
 
 
 

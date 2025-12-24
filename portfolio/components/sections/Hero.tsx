@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useMemo } from "react"
+import { useRef, useMemo, memo } from "react"
 import { ChevronDown } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { HERO } from "@/constants/content"
@@ -11,8 +11,8 @@ type Props = {
   onScrollTo: (id: string) => void
 }
 
-// Helper component for letter-by-letter animation
-const AnimatedText = ({ text, variants }: { text: string; variants: any }) => {
+// Helper component for letter-by-letter animation - memoized
+const AnimatedText = memo(({ text, variants }: { text: string; variants: any }) => {
   const words = text.split(" ")
   return (
     <>
@@ -32,9 +32,9 @@ const AnimatedText = ({ text, variants }: { text: string; variants: any }) => {
       ))}
     </>
   )
-}
+})
 
-export function Hero({ scrollY, componentScale, onScrollTo }: Props) {
+export const Hero = memo(function Hero({ scrollY, componentScale, onScrollTo }: Props) {
   const heroRef = useRef<HTMLElement>(null)
 
   // Define scroll thresholds - increased for longer scroll duration
@@ -52,28 +52,28 @@ export function Hero({ scrollY, componentScale, onScrollTo }: Props) {
     return 4
   }, [scrollY])
 
-  // Letter animation variants for each phase
-  const slideInVariants = {
+  // Letter animation variants for each phase - with GPU acceleration
+  const slideInVariants = useMemo(() => ({
     hidden: { x: -50, opacity: 0 },
-    visible: { x: 0, opacity: 1 },
-  }
+    visible: { x: 0, opacity: 1, transition: { force3D: true } },
+  }), [])
 
-  const fadeInVariants = {
+  const fadeInVariants = useMemo(() => ({
     hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1 },
-  }
+    visible: { opacity: 1, scale: 1, transition: { force3D: true } },
+  }), [])
 
-  const bounceInVariants = {
+  const bounceInVariants = useMemo(() => ({
     hidden: { y: -30, opacity: 0 },
-    visible: { y: 0, opacity: 1 },
-  }
+    visible: { y: 0, opacity: 1, transition: { force3D: true } },
+  }), [])
 
-  const rotateInVariants = {
+  const rotateInVariants = useMemo(() => ({
     hidden: { rotate: -180, opacity: 0 },
-    visible: { rotate: 0, opacity: 1 },
-  }
+    visible: { rotate: 0, opacity: 1, transition: { force3D: true } },
+  }), [])
 
-  const containerVariants = (staggerDelay: number) => ({
+  const containerVariants = useMemo(() => (staggerDelay: number) => ({
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -81,13 +81,13 @@ export function Hero({ scrollY, componentScale, onScrollTo }: Props) {
         staggerChildren: staggerDelay,
       },
     },
-  })
+  }), [])
 
-  const cubeVariants = {
+  const cubeVariants = useMemo(() => ({
     initial: { rotateX: -90, opacity: 0, y: 50, position: "absolute" as const },
-    animate: { rotateX: 0, opacity: 1, y: 0, position: "absolute" as const },
-    exit: { rotateX: 90, opacity: 0, y: -50, position: "absolute" as const },
-  }
+    animate: { rotateX: 0, opacity: 1, y: 0, position: "absolute" as const, transition: { force3D: true } },
+    exit: { rotateX: 90, opacity: 0, y: -50, position: "absolute" as const, transition: { force3D: true } },
+  }), [])
 
   const renderContent = () => {
     switch (currentPhase) {
@@ -251,7 +251,7 @@ export function Hero({ scrollY, componentScale, onScrollTo }: Props) {
       </div>
     </section>
   )
-}
+})
 
 
 

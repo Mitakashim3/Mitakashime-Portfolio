@@ -3,9 +3,12 @@
 import { motion } from "framer-motion"
 import { ChevronDown } from "lucide-react"
 import { useState } from "react"
+import { useChromeVersion } from "@/hooks/use-chrome-version"
+import { cn } from "@/lib/utils"
 
 export function ContactSlider() {
   const [isHovered, setIsHovered] = useState(false)
+  const chrome = useChromeVersion()
 
   const scrollToContact = () => {
     document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
@@ -22,7 +25,10 @@ export function ContactSlider() {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.95 }}
       >
-        <div className="p-2 rounded-full bg-background/20 backdrop-blur-sm border border-primary/20 hover:border-primary/50 transition-colors">
+        <div className={cn(
+          "p-2 rounded-full border border-primary/20 hover:border-primary/50 transition-colors",
+          chrome.supportsBackdropFilter ? "bg-background/20 backdrop-blur-sm" : "bg-background/90"
+        )}>
           <ChevronDown className="w-5 h-5 text-primary/50 hover:text-primary transition-colors" />
         </div>
 
@@ -30,7 +36,10 @@ export function ContactSlider() {
           initial={{ opacity: 0, x: 10 }}
           animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : 10 }}
           transition={{ duration: 0.2 }}
-          className="absolute top-1/2 -translate-y-1/2 right-full mr-3 whitespace-nowrap bg-black/80 backdrop-blur-md border border-primary/50 px-3 py-1.5 rounded-md text-primary font-[var(--font-orbitron)] text-xs tracking-widest shadow-[0_0_10px_rgba(0,255,0,0.2)] pointer-events-none"
+          className={cn(
+            "absolute top-1/2 -translate-y-1/2 right-full mr-3 whitespace-nowrap border border-primary/50 px-3 py-1.5 rounded-md text-primary font-[var(--font-orbitron)] text-xs tracking-widest shadow-[0_0_10px_rgba(0,255,0,0.2)] pointer-events-none",
+            chrome.supportsBackdropFilter ? "bg-black/80 backdrop-blur-md" : "bg-black"
+          )}
         >
           CONTACT ME?
         </motion.div>

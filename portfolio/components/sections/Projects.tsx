@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState, memo, useMemo } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useGSAP } from "@gsap/react"
@@ -11,21 +11,29 @@ import { ExternalLink, Github, FolderOpen } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
+import { useDeviceCapabilities } from "@/hooks/use-device-capabilities"
+import { useChromeVersion } from "@/hooks/use-chrome-version"
 
 // Register ScrollTrigger
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger)
 }
 
-// Image Carousel Component
-function ImageCarousel({ images, title }: { images: string[], title: string }) {
+// Image Carousel Component - memoized and optimized
+const ImageCarousel = memo(function ImageCarousel({ images, title }: { images: string[], title: string }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set([0]))
 
   useEffect(() => {
     if (isPaused) return
     const timer = setInterval(() => {
-      setCurrentIndex((prev) => (prev + 1) % images.length)
+      setCurrentIndex((prev) => {
+        const next = (prev + 1) % images.length
+        // Preload next image
+        setLoadedImages(loaded => new Set([...loaded, next, (next + 1) % images.length]))
+        return next
+      })
     }, 3000)
     return () => clearInterval(timer)
   }, [images.length, isPaused])
@@ -44,12 +52,14 @@ function ImageCarousel({ images, title }: { images: string[], title: string }) {
           src={img || "/placeholder.svg"}
           alt={`${title} - Image ${idx + 1}`}
           className="absolute inset-0 w-full h-full object-contain"
+          loading={loadedImages.has(idx) ? "eager" : "lazy"}
           initial={false}
           animate={{ 
             opacity: idx === currentIndex ? 1 : 0,
             scale: idx === currentIndex ? 1 : 1.05 
           }}
           transition={{ duration: 0.5 }}
+          style={{ willChange: "transform, opacity" }}
         />
       ))}
       
@@ -67,16 +77,27 @@ function ImageCarousel({ images, title }: { images: string[], title: string }) {
       </div>
     </div>
   )
-}
+})
 
 type Props = {
   scrollY?: number
   componentScale?: number
 }
 
-export function Projects({ scrollY, componentScale }: Props) {
+export const Projects = memo(function Projects({ scrollY, componentScale }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
   const cardsRef = useRef<(HTMLDivElement | null)[]>([])
+  const capabilities = useDeviceCapabilities()
+  const chrome = useChromeVersion()
+
+  // Adjust scrub speed based on device and Chrome version
+  const scrubSpeed = useMemo(() => {
+    if (capabilities.isMobile) return 0.8 // Faster on mobile
+    if (capabilities.isLowEnd) return 0.7
+    // Slower scrub for older Chrome versions for stability
+    if (chrome.isChrome && chrome.version !== null && chrome.version < 100) return 0.8
+    return 0.5
+  }, [capabilities.isMobile, capabilities.isLowEnd, chrome.isChrome, chrome.version])
 
   useGSAP(() => {
     const cards = cardsRef.current.filter(Boolean)
@@ -87,9 +108,9 @@ export function Projects({ scrollY, componentScale }: Props) {
       scrollTrigger: {
         trigger: containerRef.current,
         start: "top top",
-        end: `+=${cards.length * 100}%`, // Scroll distance proportional to number of cards
+        end: `+=${cards.length * 100}%`,
         pin: true,
-        scrub: 0.5, // Reduced scrub time for "faster" feel
+        scrub: scrubSpeed,
         anticipatePin: 1,
       }
     })
@@ -99,15 +120,16 @@ export function Projects({ scrollY, componentScale }: Props) {
       if (i === cards.length - 1) return // Last card stays visible
 
       tl.to(card, {
-        yPercent: -120, // Slide up completely out of view
-        scale: 0.95, // Slight scale down for depth
-        opacity: 0, // Fade out
+        yPercent: -120,
+        scale: 0.95,
+        opacity: 0,
         duration: 1,
-        ease: "power2.inOut", // Smoother but faster feel
-      }, ">-0.1") // Minimal overlap for cleaner transition
+        ease: "power2.inOut",
+        force3D: true, // GPU acceleration
+      }, ">-0.1")
     })
 
-  }, { scope: containerRef })
+  }, { scope: containerRef, dependencies: [scrubSpeed] })
 
   return (
     <section ref={containerRef} className="relative w-full h-screen flex flex-col items-center justify-center overflow-hidden">
@@ -201,7 +223,7 @@ export function Projects({ scrollY, componentScale }: Props) {
       </div>
     </section>
   )
-}
+})
 
 
 

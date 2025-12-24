@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef } from "react"
+import { useRef, memo } from "react"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useGSAP } from "@gsap/react"
@@ -29,7 +29,7 @@ const CATEGORY_TITLES = {
   specializations: "Core Specializations",
 }
 
-function SkillItem({ name, level, index }: { name: string; level: number; index: number }) {
+const SkillItem = memo(function SkillItem({ name, level, index }: { name: string; level: number; index: number }) {
   return (
     <div className="group/skill relative py-2">
       <div className="flex justify-between mb-2 items-center">
@@ -51,9 +51,9 @@ function SkillItem({ name, level, index }: { name: string; level: number; index:
       </div>
     </div>
   )
-}
+})
 
-export function Skills({ scrollY, componentScale }: Props) {
+export const Skills = memo(function Skills({ scrollY, componentScale }: Props) {
   const containerRef = useRef<HTMLDivElement>(null)
 
   useGSAP(() => {
@@ -73,6 +73,7 @@ export function Skills({ scrollY, componentScale }: Props) {
           x: 0,
           duration: 1,
           ease: "power3.out",
+          force3D: true,
           scrollTrigger: {
             trigger: category,
             start: "top 85%",
@@ -104,7 +105,8 @@ export function Skills({ scrollY, componentScale }: Props) {
         width: `${level}%`,
         duration: 1.2,
         ease: "power2.out",
-        delay: i * 0.15, // 0.15s stagger between each bar
+        delay: i * 0.15,
+        force3D: true,
       }, 0)
       
       tl.to(number, {
@@ -112,7 +114,7 @@ export function Skills({ scrollY, componentScale }: Props) {
         duration: 1.2,
         snap: { innerText: 1 },
         ease: "power2.out",
-        delay: i * 0.15, // Same stagger timing
+        delay: i * 0.15,
       }, 0)
     })
 
@@ -166,7 +168,7 @@ export function Skills({ scrollY, componentScale }: Props) {
       </div>
     </section>
   )
-}
+})
 
 
 
