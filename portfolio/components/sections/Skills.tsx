@@ -7,6 +7,7 @@ import { useGSAP } from "@gsap/react"
 import { SKILLS } from "@/constants/skills"
 import { cn } from "@/lib/utils"
 import { Code2, Database, Wrench, Cpu } from "lucide-react"
+import { SectionTitle } from "@/components/ui/section-title"
 
 // Register ScrollTrigger
 if (typeof window !== "undefined") {
@@ -42,7 +43,7 @@ const SkillItem = memo(function SkillItem({ name, level, index }: { name: string
       </div>
       <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden backdrop-blur-sm">
         <div 
-          className="skill-bar-fill bg-linear-to-r from-primary to-primary/60 h-full rounded-full relative shadow-[0_0_15px_rgba(var(--primary),0.5)]"
+          className="skill-bar-fill bg-gradient-to-r from-primary to-primary/60 h-full rounded-full relative shadow-[0_0_15px_rgba(var(--primary),0.5)]"
           data-level={level}
           style={{ width: "0%" }}
         >
@@ -128,14 +129,7 @@ export const Skills = memo(function Skills({ scrollY, componentScale }: Props) {
       style={{ transform: `scale(${componentScale})` }}
     >
       <div className="max-w-6xl mx-auto w-full">
-        <div className="text-center mb-20">
-          <h2 className="text-4xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-linear-to-b from-white via-white/90 to-white/50 drop-shadow-lg">
-            Technical Arsenal
-          </h2>
-          <p className="text-zinc-300 max-w-2xl mx-auto text-lg drop-shadow-md">
-            A curated stack of technologies I use to build immersive digital experiences.
-          </p>
-        </div>
+        <SectionTitle title="Technical Arsenal" className="mb-20" />
 
         <div className="grid md:grid-cols-2 gap-12 lg:gap-16">
           {(Object.entries(SKILLS) as [keyof typeof SKILLS, typeof SKILLS.frontend][]).map(([category, skills], idx) => {

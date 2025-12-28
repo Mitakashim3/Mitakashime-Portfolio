@@ -5,6 +5,7 @@ import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useGSAP } from "@gsap/react"
 import { EXPERIENCE } from "@/constants/content"
+import { SectionTitle } from "@/components/ui/section-title"
 
 // Register ScrollTrigger
 if (typeof window !== "undefined") {
@@ -74,14 +75,7 @@ export const Experience = memo(function Experience({ scrollY, componentScale }: 
       style={{ transform: `scale(${componentScale})` }}
     >
       <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-b from-white via-white/90 to-white/50 drop-shadow-lg">
-            Experience & Education
-          </h2>
-          <p className="text-zinc-300 max-w-2xl mx-auto text-lg drop-shadow-md">
-            My professional journey and academic background.
-          </p>
-        </div>
+        <SectionTitle title="Experience & Education" className="mb-16" />
 
         <div className="space-y-8">
           {EXPERIENCE.map((exp, i) => (

@@ -94,7 +94,7 @@ export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { sc
   if (capabilities.prefersReducedMotion) {
     return (
       <div
-        className="fixed inset-0 w-full h-full z-0 pointer-events-none bg-linear-to-b from-slate-950 via-slate-900 to-slate-950"
+        className="fixed inset-0 w-full h-full z-0 pointer-events-none bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950"
         style={{
           backgroundImage: "radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 50%)",
         }}

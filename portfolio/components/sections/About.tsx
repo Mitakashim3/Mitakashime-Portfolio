@@ -7,6 +7,7 @@ import { AnimatedText } from "@/components/animated-text"
 import { cn } from "@/lib/utils"
 import { useDeviceCapabilities } from "@/hooks/use-device-capabilities"
 import { useChromeVersion } from "@/hooks/use-chrome-version"
+import { SectionTitle } from "@/components/ui/section-title"
 
 type Props = { scrollY: number; componentScale: number }
 
@@ -97,13 +98,7 @@ export const About = memo(function About({ scrollY, componentScale }: Props) {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           {/* Text Content */}
           <div className="space-y-6 order-2 md:order-1">
-            <motion.h2 
-              variants={itemVariants}
-              className="text-2xl sm:text-3xl md:text-5xl font-bold mb-6 gradient-text font-sans tracking-tight"
-              style={{ textShadow: "0 0 30px rgba(255, 254, 242, 0.3)" }}
-            >
-              About Me
-            </motion.h2>
+            <SectionTitle title="About Me" className="md:text-left mb-6" />
             
             <div className="space-y-4">
               {ABOUT.paragraphs.map((p, idx) => (

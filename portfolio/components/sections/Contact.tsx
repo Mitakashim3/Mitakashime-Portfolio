@@ -12,6 +12,7 @@ import { Github, Linkedin, Mail, Send } from "lucide-react"
 import { useDeviceCapabilities } from "@/hooks/use-device-capabilities"
 import { useChromeVersion } from "@/hooks/use-chrome-version"
 import { cn } from "@/lib/utils"
+import { SectionTitle } from "@/components/ui/section-title"
 
 type Props = { scrollY: number; componentScale: number }
 
@@ -90,13 +91,7 @@ export const Contact = memo(function Contact({ scrollY, componentScale }: Props)
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
       >
-        <motion.h2 
-          variants={itemVariants}
-          className="text-2xl sm:text-3xl md:text-5xl font-bold text-center mb-10 sm:mb-16 gradient-text font-sans tracking-tight"
-          style={{ textShadow: "0 0 30px rgba(255, 254, 242, 0.3)" }}
-        >
-          Get In Touch
-        </motion.h2>
+        <SectionTitle title="Get In Touch" className="mb-10 sm:mb-16" />
 
         <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-start">
           <motion.div variants={itemVariants} className="space-y-8">
