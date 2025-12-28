@@ -71,7 +71,7 @@ export const Experience = memo(function Experience({ scrollY, componentScale }: 
   return (
     <section 
       ref={containerRef}
-      className="py-24 px-4 md:px-8 relative z-40" 
+      className="py-12 sm:py-24 px-4 md:px-8 relative z-40" 
       style={{ transform: `scale(${componentScale})` }}
     >
       <div className="max-w-4xl mx-auto">
@@ -81,8 +81,7 @@ export const Experience = memo(function Experience({ scrollY, componentScale }: 
           {EXPERIENCE.map((exp, i) => (
             <div 
               key={exp.title}
-              className="experience-card relative p-6 md:p-8 rounded-2xl bg-black/20 backdrop-blur-md border border-white/10 hover:border-primary/30 transition-colors duration-300"
-            >
+              className="experience-card relative p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl bg-black/20 backdrop-blur-md border border-white/10 hover:border-primary/30 transition-colors duration-300">
               {/* Animated left border accent */}
               <div 
                 className="card-border absolute left-0 top-0 w-1 bg-gradient-to-b from-primary to-primary/40 rounded-full"
@@ -92,14 +91,14 @@ export const Experience = memo(function Experience({ scrollY, componentScale }: 
               <div className="ml-4">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4 gap-2">
                   <div>
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-1 font-sans">
+                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-1 font-sans">
                       {exp.title}
                     </h3>
-                    <p className="text-primary font-semibold font-sans text-lg">
+                    <p className="text-primary font-semibold font-sans text-base sm:text-lg">
                       {exp.organization}
                     </p>
                   </div>
-                  <span className="font-mono text-sm text-zinc-400 md:text-base">
+                  <span className="font-mono text-xs sm:text-sm text-zinc-400 md:text-base">
                     {exp.period}
                   </span>
                 </div>

@@ -45,8 +45,8 @@ export function SectionTitle({ title, className }: SectionTitleProps) {
   }, { scope: containerRef })
 
   return (
-    <div ref={containerRef} className={cn("mb-8 text-center", className)}>
-      <h2 className="text-3xl md:text-5xl font-bold text-white drop-shadow-lg inline-block">
+    <div ref={containerRef} className={cn("mb-6 md:mb-8 text-center", className)}>
+      <h2 className="text-2xl md:text-5xl font-bold text-white drop-shadow-lg inline-block">
         {title.split("").map((char, i) => (
           <span
             key={i}

@@ -222,13 +222,13 @@ export function ProjectsCarousel() {
 
       <button 
         onClick={prevCard}
-        className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-900/80 border border-primary text-white flex items-center justify-center hover:bg-slate-800 hover:scale-110 transition-all shadow-[0_0_10px_rgba(157,0,255,0.5)] z-10"
+        className="absolute left-40 md:left-40 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-900/80 border border-primary text-white flex items-center justify-center hover:bg-slate-800 hover:scale-110 transition-all shadow-[0_0_10px_rgba(157,0,255,0.5)] z-10"
       >
         <ChevronLeft size={20} className="md:w-6 md:h-6" />
       </button>
       <button 
         onClick={nextCard}
-        className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-900/80 border border-primary text-white flex items-center justify-center hover:bg-slate-800 hover:scale-110 transition-all shadow-[0_0_10px_rgba(157,0,255,0.5)] z-10"
+        className="absolute right-2 md:right-40 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-900/80 border border-primary text-white flex items-center justify-center hover:bg-slate-800 hover:scale-110 transition-all shadow-[0_0_10px_rgba(157,0,255,0.5)] z-10"
       >
         <ChevronRight size={20} className="md:w-6 md:h-6" />
       </button>

@@ -34,10 +34,10 @@ const SkillItem = memo(function SkillItem({ name, level, index }: { name: string
   return (
     <div className="group/skill relative py-2">
       <div className="flex justify-between mb-2 items-center">
-        <span className="text-base font-medium text-zinc-100 group-hover/skill:text-primary transition-colors duration-300 font-sans tracking-wide drop-shadow-md">
+        <span className="text-sm sm:text-base font-medium text-zinc-100 group-hover/skill:text-primary transition-colors duration-300 font-sans tracking-wide drop-shadow-md">
           {name}
         </span>
-        <span className="text-sm font-mono text-primary font-bold drop-shadow-md">
+        <span className="text-xs sm:text-sm font-mono text-primary font-bold drop-shadow-md">
           <span className="skill-number" data-level={level}>0</span>%
         </span>
       </div>
@@ -125,13 +125,13 @@ export const Skills = memo(function Skills({ scrollY, componentScale }: Props) {
     <section 
       id="skills" 
       ref={containerRef}
-      className="py-24 px-4 md:px-8 relative z-40 w-full min-h-screen flex flex-col justify-center overflow-hidden" 
+      className="py-12 sm:py-24 px-4 md:px-8 relative z-40 w-full min-h-screen flex flex-col justify-center overflow-hidden" 
       style={{ transform: `scale(${componentScale})` }}
     >
       <div className="max-w-6xl mx-auto w-full">
         <SectionTitle title="Technical Arsenal" className="mb-20" />
 
-        <div className="grid md:grid-cols-2 gap-12 lg:gap-16">
+        <div className="grid md:grid-cols-2 gap-8 sm:gap-12 lg:gap-16">
           {(Object.entries(SKILLS) as [keyof typeof SKILLS, typeof SKILLS.frontend][]).map(([category, skills], idx) => {
             const Icon = CATEGORY_ICONS[category]
             return (
@@ -141,10 +141,10 @@ export const Skills = memo(function Skills({ scrollY, componentScale }: Props) {
               >
                 {/* Header */}
                 <div className={`flex items-center gap-4 mb-8 ${idx % 2 === 0 ? 'flex-row' : 'flex-row md:flex-row-reverse'}`}>
-                  <div className="p-3 rounded-xl bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.3)] group-hover:scale-110 transition-transform duration-300">
-                    <Icon className="w-8 h-8" />
+                  <div className="p-2 sm:p-3 rounded-lg sm:rounded-xl bg-primary/10 text-primary border border-primary/20 shadow-[0_0_15px_rgba(var(--primary),0.3)] group-hover:scale-110 transition-transform duration-300">
+                    <Icon className="w-6 h-6 sm:w-8 sm:h-8" />
                   </div>
-                  <h3 className={`text-2xl font-bold text-white font-sans tracking-wide drop-shadow-lg ${idx % 2 === 0 ? 'text-left' : 'text-left md:text-right'}`}>
+                  <h3 className={`text-lg sm:text-2xl font-bold text-white font-sans tracking-wide drop-shadow-lg ${idx % 2 === 0 ? 'text-left' : 'text-left md:text-right'}`}>
                     {CATEGORY_TITLES[category]}
                   </h3>
                 </div>
