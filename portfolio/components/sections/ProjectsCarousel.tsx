@@ -16,6 +16,7 @@ export function ProjectsCarousel() {
   const [isDragging, setIsDragging] = useState(false)
   const [startX, setStartX] = useState(0)
   const [startTheta, setStartTheta] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
 
   const totalCards = PROJECTS.length
 
@@ -26,7 +27,9 @@ export function ProjectsCarousel() {
   }, [totalCards])
 
   const handleResize = useCallback(() => {
-    setRadius(window.innerWidth <= 768 ? 250 : 500)
+    const mobile = window.innerWidth <= 768
+    setIsMobile(mobile)
+    setRadius(mobile ? 280 : 500)
   }, [])
 
   useEffect(() => {
@@ -103,7 +106,7 @@ export function ProjectsCarousel() {
   }
 
   return (
-    <div className="relative w-full h-[600px] flex flex-col items-center justify-center overflow-hidden perspective-1000 select-none">
+    <div className="relative w-full h-[500px] md:h-[600px] flex flex-col items-center justify-center overflow-hidden perspective-1000 select-none px-4 md:px-0">
       <div 
         className="relative w-full h-full flex items-center justify-center preserve-3d transition-transform duration-500 ease-out"
         style={{ 
@@ -128,8 +131,8 @@ export function ProjectsCarousel() {
               key={index}
               className="absolute cursor-pointer transition-transform duration-500"
               style={{
-                width: '380px',
-                height: '500px',
+                width: isMobile ? '240px' : '380px',
+                height: isMobile ? '340px' : '500px',
                 transform: `rotateY(${angle}deg) translateZ(${radius}px)`,
                 transformStyle: 'preserve-3d'
               }}
@@ -144,13 +147,13 @@ export function ProjectsCarousel() {
               >
                 {/* Front */}
                 <div 
-                  className="absolute inset-0 w-full h-full backface-hidden rounded-xl border border-primary/30 bg-gradient-to-br from-slate-900/90 to-slate-800/90 p-6 flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.5)]"
+                  className="absolute inset-0 w-full h-full backface-hidden rounded-xl border border-primary/30 bg-gradient-to-br from-slate-900/90 to-slate-800/90 p-4 md:p-6 flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.5)]"
                   style={{ backfaceVisibility: 'hidden' }}
                 >
                   <div className="text-[10px] font-orbitron text-accent mb-2">PROJECT</div>
                   <h3 className="text-lg font-bold text-white mb-3 drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">{project.title}</h3>
                   
-                  <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden bg-black/30 flex items-center justify-center group">
+                  <div className="relative w-full h-32 md:h-48 mb-3 md:mb-4 rounded-lg overflow-hidden bg-black/30 flex items-center justify-center group">
                     {project.image ? (
                       <Image 
                         src={project.image} 
@@ -164,7 +167,7 @@ export function ProjectsCarousel() {
                     <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                   </div>
 
-                  <p className="text-xs text-slate-300 line-clamp-4">
+                  <p className="text-xs text-slate-300 line-clamp-3 md:line-clamp-4">
                     {project.description}
                   </p>
                   
@@ -175,7 +178,7 @@ export function ProjectsCarousel() {
 
                 {/* Back */}
                 <div 
-                  className="absolute inset-0 w-full h-full backface-hidden rounded-xl border border-secondary/30 bg-gradient-to-br from-slate-800/90 to-slate-900/90 p-6 flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.5)] rotate-y-180"
+                  className="absolute inset-0 w-full h-full backface-hidden rounded-xl border border-secondary/30 bg-gradient-to-br from-slate-800/90 to-slate-900/90 p-4 md:p-6 flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.5)] rotate-y-180"
                   style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
                 >
                   <h3 className="text-lg font-bold text-white mb-3">{project.title}</h3>
@@ -219,15 +222,15 @@ export function ProjectsCarousel() {
 
       <button 
         onClick={prevCard}
-        className="absolute left-50 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-slate-900/80 border border-primary text-white flex items-center justify-center hover:bg-slate-800 hover:scale-110 transition-all shadow-[0_0_10px_rgba(157,0,255,0.5)] z-10"
+        className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-900/80 border border-primary text-white flex items-center justify-center hover:bg-slate-800 hover:scale-110 transition-all shadow-[0_0_10px_rgba(157,0,255,0.5)] z-10"
       >
-        <ChevronLeft size={24} />
+        <ChevronLeft size={20} className="md:w-6 md:h-6" />
       </button>
       <button 
         onClick={nextCard}
-        className="absolute right-50 top-1/2 -translate-y-1/2 w-12 h-12 rounded-full bg-slate-900/80 border border-primary text-white flex items-center justify-center hover:bg-slate-800 hover:scale-110 transition-all shadow-[0_0_10px_rgba(157,0,255,0.5)] z-10"
+        className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 rounded-full bg-slate-900/80 border border-primary text-white flex items-center justify-center hover:bg-slate-800 hover:scale-110 transition-all shadow-[0_0_10px_rgba(157,0,255,0.5)] z-10"
       >
-        <ChevronRight size={24} />
+        <ChevronRight size={20} className="md:w-6 md:h-6" />
       </button>
     </div>
   )
