@@ -86,7 +86,7 @@ export const PROJECTS: Project[] = [
     "Render (Cloud Hosting)",
     "GitHub Actions (CI/CD)"
   ],
-  "image": "/OptiPOSProject.jpg",
+  "image": "/OptiPOSProject.png",
   "images": ["/OptiPOSProject.png", "/OptiPOSProject1.png", "/OptiPOSProjectCashier.png"],
   "href": "https://github.com/Mitakashim3/MItakashime-POS"
 },
