@@ -22,11 +22,11 @@ export const Contact = memo(function Contact({ scrollY, componentScale }: Props)
   const capabilities = useDeviceCapabilities()
   const chrome = useChromeVersion()
 
-  // Reduce particles on mobile/low-end
+  // Reduce particles on mobile/low-end for better performance
   const particleCount = useMemo(() => {
-    if (capabilities.isMobile) return 5
-    if (capabilities.isLowEnd) return 8
-    return 15
+    if (capabilities.isMobile) return 0 // Disable particles on mobile
+    if (capabilities.isLowEnd) return 5
+    return 12
   }, [capabilities.isMobile, capabilities.isLowEnd])
 
   const containerVariants = useMemo(() => ({

@@ -47,6 +47,9 @@
 
 body {
   overflow-x: hidden;
+  /* Performance optimizations */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Chrome-specific optimizations */

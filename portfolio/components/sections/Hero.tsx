@@ -52,25 +52,25 @@ export const Hero = memo(function Hero({ scrollY, componentScale, onScrollTo }: 
     return 4
   }, [scrollY])
 
-  // Letter animation variants for each phase - with GPU acceleration
+  // Letter animation variants for each phase - optimized
   const slideInVariants = useMemo(() => ({
     hidden: { x: -50, opacity: 0 },
-    visible: { x: 0, opacity: 1, transition: { force3D: true } },
+    visible: { x: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
   }), [])
 
   const fadeInVariants = useMemo(() => ({
     hidden: { opacity: 0, scale: 0.8 },
-    visible: { opacity: 1, scale: 1, transition: { force3D: true } },
+    visible: { opacity: 1, scale: 1, transition: { duration: 0.5, ease: "easeOut" } },
   }), [])
 
   const bounceInVariants = useMemo(() => ({
     hidden: { y: -30, opacity: 0 },
-    visible: { y: 0, opacity: 1, transition: { force3D: true } },
+    visible: { y: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
   }), [])
 
   const rotateInVariants = useMemo(() => ({
     hidden: { rotate: -180, opacity: 0 },
-    visible: { rotate: 0, opacity: 1, transition: { force3D: true } },
+    visible: { rotate: 0, opacity: 1, transition: { duration: 0.5, ease: "easeOut" } },
   }), [])
 
   const containerVariants = useMemo(() => (staggerDelay: number) => ({
@@ -84,9 +84,9 @@ export const Hero = memo(function Hero({ scrollY, componentScale, onScrollTo }: 
   }), [])
 
   const cubeVariants = useMemo(() => ({
-    initial: { rotateX: -90, opacity: 0, y: 50, position: "absolute" as const },
-    animate: { rotateX: 0, opacity: 1, y: 0, position: "absolute" as const, transition: { force3D: true } },
-    exit: { rotateX: 90, opacity: 0, y: -50, position: "absolute" as const, transition: { force3D: true } },
+    initial: { rotateX: -90, opacity: 0, y: 50 },
+    animate: { rotateX: 0, opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+    exit: { rotateX: 90, opacity: 0, y: -50, transition: { duration: 0.5, ease: "easeIn" } },
   }), [])
 
   const renderContent = () => {

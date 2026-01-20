@@ -47,7 +47,6 @@ export const Experience = memo(function Experience({ scrollY, componentScale }: 
           duration: 0.8,
           ease: "power2.out",
           delay: i * 0.2,
-          force3D: true,
         }
       )
 
@@ -60,7 +59,6 @@ export const Experience = memo(function Experience({ scrollY, componentScale }: 
           height: "100%",
           duration: 0.8,
           ease: "power2.out",
-          force3D: true,
         },
         0
       )

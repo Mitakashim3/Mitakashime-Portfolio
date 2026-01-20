@@ -25,11 +25,11 @@ export const About = memo(function About({ scrollY, componentScale }: Props) {
   const y = useTransform(scrollYProgress, [0, 1], [50, -50])
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.9, 1], [0, 1, 1, 0])
 
-  // Reduce particle count on mobile/low-end devices
+  // Reduce particle count on mobile/low-end devices for better performance
   const particleCount = useMemo(() => {
-    if (capabilities.isMobile) return 3
-    if (capabilities.isLowEnd) return 5
-    return 10
+    if (capabilities.isMobile) return 0 // Disable particles on mobile completely
+    if (capabilities.isLowEnd) return 3
+    return 8
   }, [capabilities.isMobile, capabilities.isLowEnd])
 
   const containerVariants = useMemo(() => ({

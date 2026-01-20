@@ -15,6 +15,9 @@ export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { sc
 
   // Force a static background on mobile or older Chrome versions for performance
   const forceStaticBackground = capabilities.isMobile || (chrome.isChrome && chrome.version !== null && chrome.version < 90)
+  
+  // Use modern gradient on mobile instead of static image
+  const useMobileGradient = capabilities.isMobile
 
   // Auto-disable video on mobile (handsets) by default for performance
   useEffect(() => {
@@ -148,6 +151,18 @@ export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { sc
               willChange: capabilities.isLowEnd ? "auto" : "transform",
             }}
           />
+        ) : useMobileGradient ? (
+          <motion.div
+            key="mobile-gradient"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: animationDuration }}
+            className="fixed inset-0 w-full h-full z-0 pointer-events-none"
+            style={{
+              background: "linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #1a1a2e 100%)",
+            }}
+          />
         ) : (
           <motion.div
             key="static"
@@ -163,8 +178,8 @@ export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { sc
         )}
       </AnimatePresence>
       
-      {/* Consistent dark overlay for uniform appearance across all sections */}
-      <div className="fixed inset-0 bg-black/40 z-0 pointer-events-none" />
+      {/* Consistent dark overlay for uniform appearance across all sections - lighter on mobile */}
+      <div className={`fixed inset-0 z-0 pointer-events-none ${useMobileGradient ? 'bg-black/20' : 'bg-black/40'}`} />
     </>
   )
 })

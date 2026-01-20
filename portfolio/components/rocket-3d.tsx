@@ -87,12 +87,20 @@ export default function Rocket3D({ isHovered, isLaunching }: { isHovered: boolea
     <div className="w-full h-full relative overflow-visible">
       <Canvas 
         camera={{ position: [0, 0, 23], fov: 45 }} 
-        gl={{ alpha: true, antialias: true, powerPreference: "high-performance" }} 
-        dpr={[1, 1.5]}
+        gl={{ 
+          alpha: true, 
+          antialias: false, // Disable for better performance
+          powerPreference: "high-performance",
+          stencil: false,
+          depth: true
+        }} 
+        dpr={1} // Fixed to 1 for better performance
         style={{ overflow: "visible" }}
+        performance={{ min: 0.5 }}
+        frameloop="demand" // Render only when needed
       >
         <ambientLight intensity={2} />
-        <directionalLight position={[2, 5, 2]} intensity={2} />
+        <directionalLight position={[2, 5, 2]} intensity={2} castShadow={false} />
         {/* Environment is crucial for the metallic rocket to look real, not white/black */}
         <Environment preset="warehouse" />
         <Center>
