@@ -1,29 +1,54 @@
 "use client"
 
 import { useEffect, useRef, useState, memo } from "react"
-import { useProgress, useGLTF } from "@react-three/drei"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 
 export const Preloader = memo(function Preloader() {
-  const { active, progress } = useProgress()
   const [shouldRender, setShouldRender] = useState(true)
   const containerRef = useRef<HTMLDivElement>(null)
   const nameRef = useRef<HTMLDivElement>(null)
-  const progressRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<gsap.core.Timeline | null>(null)
   
-  // Minimum display time state
-  const [minTimeElapsed, setMinTimeElapsed] = useState(false)
-
   useEffect(() => {
     // Lock body scroll
     document.body.style.overflow = "hidden"
     
-    // Minimum display time timer (reduced to 1.5 seconds for faster perceived loading)
+    // Shorter preloader duration
     const timer = setTimeout(() => {
-      setMinTimeElapsed(true)
-    }, 1500)
+      if (containerRef.current && nameRef.current) {
+        // Kill any active animations
+        if (animationRef.current) {
+          animationRef.current.kill()
+        }
+        gsap.killTweensOf(nameRef.current.querySelectorAll(".letter"))
+        
+        const tl = gsap.timeline({
+          onComplete: () => {
+            setShouldRender(false)
+            document.body.style.overflow = ""
+          }
+        })
+
+        // Reset to 0 rotation for clean exit
+        gsap.set(nameRef.current.querySelectorAll(".letter"), { 
+          rotateX: 0,
+        })
+
+        // Quick exit animation
+        tl.to(nameRef.current, {
+          y: -80,
+          opacity: 0,
+          duration: 0.5,
+          ease: "power2.in",
+        })
+        .to(containerRef.current, {
+          opacity: 0,
+          duration: 0.4,
+          ease: "power2.inOut",
+        }, "-=0.2")
+      }
+    }, 2000) // 2 seconds to show the animation
 
     return () => {
       document.body.style.overflow = ""
@@ -36,89 +61,28 @@ export const Preloader = memo(function Preloader() {
 
     const letters = nameRef.current.querySelectorAll(".letter")
     
-    // Initial set with GPU acceleration
-    gsap.set(letters, {
-      transformOrigin: "50% 50% -20px",
-      rotateX: 0,
-      opacity: 1,
-      force3D: true, // Force GPU acceleration
-      willChange: "transform, opacity"
-    })
-
-    // Looping "Cube Down" Animation - optimized
+    // Optimized 3D rotation animation
     const tl = gsap.timeline({ 
-      repeat: -1, 
-      repeatDelay: 0.3, // Reduced delay for smoother feel
-      defaults: { 
-        ease: "power2.inOut", // Lighter easing for better performance
-        force3D: true
-      }
+      repeat: -1,
+      repeatDelay: 0.2,
     })
 
-    // Animate each letter rotating 360 degrees on X axis (tumbling down)
+    // Single 360 degree rotation with stagger
     tl.to(letters, {
       rotateX: -360,
-      duration: 1, // Slightly faster
-      stagger: 0.08, // Reduced stagger for smoother animation
+      duration: 1.2,
+      stagger: 0.06,
+      ease: "power1.inOut",
     })
 
     animationRef.current = tl
 
-    // Cleanup function to kill timeline when component unmounts or updates
     return () => {
       tl.kill()
       animationRef.current = null
     }
 
   }, { scope: containerRef, dependencies: [] })
-
-  // Exit animation
-  useEffect(() => {
-    const isLoaded = progress === 100 && minTimeElapsed
-    
-    if (isLoaded && containerRef.current && nameRef.current) {
-      // Kill any active animations on the letters to prevent conflict
-      if (animationRef.current) {
-        animationRef.current.kill()
-      }
-      gsap.killTweensOf(nameRef.current.querySelectorAll(".letter"))
-      
-      const tl = gsap.timeline({
-        onComplete: () => {
-          setShouldRender(false)
-          document.body.style.overflow = ""
-          // Clean up will-change
-          if (nameRef.current) {
-            const letters = nameRef.current.querySelectorAll(".letter")
-            gsap.set(letters, { clearProps: "willChange" })
-          }
-        }
-      })
-
-      // Reset letters to 0 rotation for clean exit
-      gsap.set(nameRef.current.querySelectorAll(".letter"), { 
-        rotateX: 0,
-        force3D: true 
-      })
-
-      // Animate name up and fade out - faster exit
-      tl.to(nameRef.current, {
-        y: -100,
-        opacity: 0,
-        duration: 0.5, // Reduced from 0.8
-        ease: "power2.in",
-        force3D: true
-      })
-      
-      // Slide up background
-      .to(containerRef.current, {
-        yPercent: -100,
-        duration: 0.6, // Reduced from 0.8
-        ease: "power2.inOut",
-        force3D: true
-      }, "-=0.3") // Increased overlap for smoother transition
-    }
-  }, [progress, minTimeElapsed])
 
   if (!shouldRender) return null
 
@@ -127,10 +91,9 @@ export const Preloader = memo(function Preloader() {
   return (
     <div 
       ref={containerRef}
-      className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-[#050505] text-white perspective-1000"
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#050505] text-white"
       style={{ 
-        perspective: "1000px",
-        willChange: "transform" 
+        perspective: "800px",
       }}
     >
       <div 
@@ -138,7 +101,6 @@ export const Preloader = memo(function Preloader() {
         className="relative flex text-4xl md:text-6xl font-bold tracking-wider"
         style={{ 
           transformStyle: "preserve-3d",
-          willChange: "transform, opacity"
         }}
       >
         {name.split("").map((char, i) => (
@@ -146,10 +108,9 @@ export const Preloader = memo(function Preloader() {
             key={i} 
             className="letter inline-block"
             style={{ 
+              transformOrigin: "50% 50%",
               backfaceVisibility: "hidden",
-              display: "inline-block",
               textShadow: "0 4px 8px rgba(0,0,0,0.5)",
-              willChange: "transform, opacity"
             }}
           >
             {char}
@@ -159,7 +120,3 @@ export const Preloader = memo(function Preloader() {
     </div>
   )
 })
-
-// Preload critical 3D assets to ensure they are tracked by useProgress
-useGLTF.preload("/falcon_9_spacex_rocket/scene.gltf")
-useGLTF.preload("/scene.gltf")
