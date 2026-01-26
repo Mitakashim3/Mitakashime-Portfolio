@@ -157,16 +157,13 @@ export const About = memo(function About({ scrollY, componentScale }: Props) {
               </div>
 
               {/* Floating Elements */}
-              <motion.div 
-                className={cn(
-                  "hidden sm:block absolute -right-4 top-20 p-3 rounded-xl border border-primary/20 shadow-lg z-30",
-                  chrome.supportsBackdropFilter ? "bg-card/80 backdrop-blur-md" : "bg-card"
-                )}
+              <motion.img 
+                src="/UFO.gif" 
+                alt="Robot waving" 
+                className="hidden lg:block absolute -right-2 top-20 h-48 z-30 "
                 animate={{ y: [0, -10, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <span className="text-2xl">MWEHEHE</span>
-              </motion.div>
+              />
               
               <motion.div 
                 className={cn(
