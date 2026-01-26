@@ -17,7 +17,7 @@ export const ABOUT = {
     "I'm a passionate computer science student with a deep interest in web development, artificial intelligence, and creating innovative solutions that make a difference. My journey in technology started with curiosity and has evolved into a commitment to building impactful applications.",
     "When I'm not coding, you'll find me exploring new technologies, contributing to open-source projects, or working on personal projects that challenge my skills and expand my knowledge across the digital universe.",
   ],
-  profileImage: "/himmel1x1.png",
+  profileImage: "/Clark_Profile_Picture.png",
 }
 
 export type ExperienceEntry = {
