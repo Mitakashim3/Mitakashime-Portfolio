@@ -23,7 +23,6 @@ import { ContactSlider } from "@/components/sections/ContactSlider"
 import { Hero } from "@/components/sections/Hero"
 import { About } from "@/components/sections/About"
 import { Projects } from "@/components/sections/Projects"
-import { Design } from "@/components/sections/Design"
 import { Experience } from "@/components/sections/Experience"
 import { Contact } from "@/components/sections/Contact"
 import { Preloader } from "@/components/preloader"
@@ -92,7 +91,7 @@ export default function Portfolio() {
         <Hero scrollY={scrollY} componentScale={componentScale} onScrollTo={scrollToSection} />
         <About scrollY={scrollY} componentScale={componentScale} />
         <Projects scrollY={scrollY} componentScale={componentScale} />
-        <Design scrollY={scrollY} componentScale={componentScale} />
+        {/* <Design scrollY={scrollY} componentScale={componentScale} /> */}
         <Experience scrollY={scrollY} componentScale={componentScale} />
         <Contact scrollY={scrollY} componentScale={componentScale} />
       </div>
