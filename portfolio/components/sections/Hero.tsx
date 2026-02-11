@@ -167,47 +167,60 @@ export const Hero = memo(function Hero({ scrollY, componentScale, onScrollTo }: 
           >
             <div className="mb-8">
               <motion.h1
-                variants={{ 
-                  hidden: { x: -100, y: -50, rotate: -10, opacity: 0, scale: 0.8 }, 
-                  visible: { 
-                    x: 0, 
-                    y: 0, 
-                    rotate: 0, 
-                    opacity: 1, 
+                variants={{
+                  hidden: { x: -100, y: -50, rotate: -10, opacity: 0, scale: 0.8 },
+                  visible: {
+                    x: 0,
+                    y: 0,
+                    rotate: 0,
+                    opacity: 1,
                     scale: 1,
                     transition: { type: "spring", stiffness: 100, damping: 15 }
-                  } 
+                  }
                 }}
                 className="text-4xl sm:text-5xl md:text-7xl font-bold mb-6 text-balance animate-pulse font-sans leading-tight"
               >
                 {HERO.title}
               </motion.h1>
               <motion.p
-                variants={{ 
-                  hidden: { x: 100, y: 50, rotate: 5, opacity: 0 }, 
-                  visible: { 
-                    x: 0, 
-                    y: 0, 
-                    rotate: 0, 
+                variants={{
+                  hidden: { x: 100, y: 50, rotate: 5, opacity: 0 },
+                  visible: {
+                    x: 0,
+                    y: 0,
+                    rotate: 0,
                     opacity: 1,
                     transition: { type: "spring", stiffness: 100, damping: 15 }
-                  } 
+                  }
                 }}
-                className="text-lg sm:text-xl md:text-2xl mb-8 text-pretty backdrop-blur-sm bg-background/20 rounded-lg p-3 sm:p-4 font-mono"
+                className="text-lg sm:text-xl md:text-2xl mb-4 text-pretty backdrop-blur-sm bg-background/20 rounded-lg p-3 sm:p-4 font-mono"
               >
                 {HERO.subtitle}
               </motion.p>
+              <motion.p
+                variants={{
+                  hidden: { y: 50, opacity: 0 },
+                  visible: {
+                    y: 0,
+                    opacity: 1,
+                    transition: { type: "spring", stiffness: 100, damping: 15, delay: 0.2 }
+                  }
+                }}
+                className="text-base sm:text-lg md:text-xl mb-8 text-center max-w-2xl mx-auto text-white font-mono"
+              >
+                {HERO.description}
+              </motion.p>
               <motion.div
-                variants={{ 
-                  hidden: { y: 100, opacity: 0, scale: 0.5 }, 
-                  visible: { 
-                    y: 0, 
-                    opacity: 1, 
+                variants={{
+                  hidden: { y: 100, opacity: 0, scale: 0.5 },
+                  visible: {
+                    y: 0,
+                    opacity: 1,
                     scale: 1,
                     transition: { type: "spring", stiffness: 120, damping: 20 }
-                  } 
+                  }
                 }}
-                className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center"
+                className="flex flex-col text-white sm:flex-row gap-3 sm:gap-4 justify-center"
               >
                 <button
                   onClick={() => onScrollTo(HERO.primaryCta.target)}

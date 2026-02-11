@@ -159,10 +159,70 @@ export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { sc
             exit={{ opacity: 0 }}
             transition={{ duration: animationDuration }}
             className="fixed inset-0 w-full h-full z-0 pointer-events-none"
-            style={{
-              background: "linear-gradient(180deg, #0a0a0a 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #1a1a2e 100%)",
-            }}
-          />
+          >
+            {/* Dark space base gradient */}
+            <div 
+              className="absolute inset-0"
+              style={{
+                background: "linear-gradient(180deg, #050510 0%, #0a0a1e 20%, #0d1528 45%, #0a1220 65%, #080818 85%, #050510 100%)",
+              }}
+            />
+            
+            {/* Subtle nebula glow - positioned to add depth */}
+            <div 
+              className="absolute top-[20%] left-[30%] w-[250px] h-[250px] rounded-full opacity-15"
+              style={{
+                background: 'radial-gradient(circle, rgba(56,189,248,0.25) 0%, rgba(139,92,246,0.1) 40%, transparent 70%)',
+                filter: 'blur(60px)'
+              }}
+            />
+            <div 
+              className="absolute top-[60%] right-[20%] w-[200px] h-[200px] rounded-full opacity-10"
+              style={{
+                background: 'radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(56,189,248,0.08) 50%, transparent 70%)',
+                filter: 'blur(50px)'
+              }}
+            />
+            
+            {/* Static stars layer - pure CSS, zero JS overhead */}
+            <div className="absolute inset-0" style={{
+              backgroundImage: `
+                radial-gradient(1px 1px at 10% 10%, rgba(255,255,255,0.8) 50%, transparent 50%),
+                radial-gradient(1px 1px at 20% 40%, rgba(255,255,255,0.6) 50%, transparent 50%),
+                radial-gradient(1.5px 1.5px at 30% 70%, rgba(255,255,255,0.9) 50%, transparent 50%),
+                radial-gradient(1px 1px at 40% 20%, rgba(255,255,255,0.5) 50%, transparent 50%),
+                radial-gradient(1px 1px at 50% 80%, rgba(255,255,255,0.7) 50%, transparent 50%),
+                radial-gradient(1.5px 1.5px at 60% 30%, rgba(255,255,255,0.8) 50%, transparent 50%),
+                radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,0.6) 50%, transparent 50%),
+                radial-gradient(1px 1px at 80% 15%, rgba(255,255,255,0.9) 50%, transparent 50%),
+                radial-gradient(1.5px 1.5px at 90% 50%, rgba(255,255,255,0.7) 50%, transparent 50%),
+                radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.5) 50%, transparent 50%),
+                radial-gradient(1px 1px at 25% 55%, rgba(255,255,255,0.8) 50%, transparent 50%),
+                radial-gradient(1.5px 1.5px at 35% 25%, rgba(255,255,255,0.6) 50%, transparent 50%),
+                radial-gradient(1px 1px at 45% 95%, rgba(255,255,255,0.7) 50%, transparent 50%),
+                radial-gradient(1px 1px at 55% 5%, rgba(255,255,255,0.9) 50%, transparent 50%),
+                radial-gradient(1.5px 1.5px at 65% 75%, rgba(255,255,255,0.5) 50%, transparent 50%),
+                radial-gradient(1px 1px at 75% 45%, rgba(255,255,255,0.8) 50%, transparent 50%),
+                radial-gradient(1px 1px at 85% 90%, rgba(255,255,255,0.6) 50%, transparent 50%),
+                radial-gradient(1.5px 1.5px at 95% 35%, rgba(255,255,255,0.7) 50%, transparent 50%),
+                radial-gradient(1px 1px at 5% 65%, rgba(255,255,255,0.9) 50%, transparent 50%),
+                radial-gradient(1px 1px at 12% 32%, rgba(255,255,255,0.5) 50%, transparent 50%),
+                radial-gradient(0.5px 0.5px at 8% 48%, rgba(255,255,255,0.4) 50%, transparent 50%),
+                radial-gradient(0.5px 0.5px at 32% 12%, rgba(255,255,255,0.3) 50%, transparent 50%),
+                radial-gradient(0.5px 0.5px at 58% 42%, rgba(255,255,255,0.5) 50%, transparent 50%),
+                radial-gradient(0.5px 0.5px at 72% 88%, rgba(255,255,255,0.4) 50%, transparent 50%),
+                radial-gradient(0.5px 0.5px at 88% 62%, rgba(255,255,255,0.3) 50%, transparent 50%)
+              `
+            }} />
+            
+            {/* Twinkling stars - minimal CSS animation */}
+            <div className="absolute w-1 h-1 rounded-full bg-white/90 top-[15%] left-[25%] animate-pulse" style={{ animationDuration: '2s' }} />
+            <div className="absolute w-1 h-1 rounded-full bg-white/80 top-[45%] left-[75%] animate-pulse" style={{ animationDuration: '3s', animationDelay: '1s' }} />
+            <div className="absolute w-1.5 h-1.5 rounded-full bg-cyan-300/70 top-[70%] left-[15%] animate-pulse" style={{ animationDuration: '2.5s', animationDelay: '0.5s' }} />
+            <div className="absolute w-1 h-1 rounded-full bg-white/70 top-[25%] left-[85%] animate-pulse" style={{ animationDuration: '4s', animationDelay: '2s' }} />
+            <div className="absolute w-0.5 h-0.5 rounded-full bg-white/60 top-[55%] left-[45%] animate-pulse" style={{ animationDuration: '3.5s', animationDelay: '0.8s' }} />
+            <div className="absolute w-1 h-1 rounded-full bg-white/75 top-[80%] left-[60%] animate-pulse" style={{ animationDuration: '2.8s', animationDelay: '1.5s' }} />
+          </motion.div>
         ) : (
           <motion.div
             key="static"

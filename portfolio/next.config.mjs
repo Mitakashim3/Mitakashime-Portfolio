@@ -20,7 +20,7 @@ const nextConfig = {
   experimental: {
     optimizePackageImports: ['@radix-ui/react-icons', 'lucide-react', '@react-three/fiber', '@react-three/drei'],
   },
-  // Headers for better caching and security
+  // Headers for better caching, security, and SEO
   async headers() {
     return [
       {
@@ -34,6 +34,18 @@ const nextConfig = {
             key: 'X-Frame-Options',
             value: 'SAMEORIGIN'
           },
+          {
+            key: 'X-Content-Type-Options',
+            value: 'nosniff'
+          },
+          {
+            key: 'Referrer-Policy',
+            value: 'origin-when-cross-origin'
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=()'
+          }
         ],
       },
       {
@@ -56,6 +68,15 @@ const nextConfig = {
       },
       {
         source: '/:path*.mp4',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=31536000, immutable',
+          },
+        ],
+      },
+      {
+        source: '/:path*.(jpg|jpeg|png|webp|avif|svg|ico)',
         headers: [
           {
             key: 'Cache-Control',

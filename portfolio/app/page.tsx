@@ -6,14 +6,15 @@ import { motion } from "framer-motion"
 import { ArrowUp } from "lucide-react"
 import { useDeviceCapabilities } from "@/hooks/use-device-capabilities"
 import { useChromeVersion } from "@/hooks/use-chrome-version"
+import { StructuredData } from "@/components/structured-data"
 
 // Dynamic import client-only heavy components with loading states
-const BlackHole = dynamic(() => import("@/components/black-hole").then((m) => m.BlackHole), { 
+const BlackHole = dynamic(() => import("@/components/black-hole").then((m) => m.BlackHole), {
   ssr: false,
   loading: () => <div className="w-full h-full bg-transparent" />
 })
 
-const GalaxyBackground = dynamic(() => import("@/components/galaxy-background").then((m) => m.GalaxyBackground), { 
+const GalaxyBackground = dynamic(() => import("@/components/galaxy-background").then((m) => m.GalaxyBackground), {
   ssr: false,
   loading: () => <div className="fixed inset-0 bg-black" />
 })
@@ -22,7 +23,7 @@ import { ContactSlider } from "@/components/sections/ContactSlider"
 import { Hero } from "@/components/sections/Hero"
 import { About } from "@/components/sections/About"
 import { Projects } from "@/components/sections/Projects"
-import { Skills } from "@/components/sections/Skills"
+import { Design } from "@/components/sections/Design"
 import { Experience } from "@/components/sections/Experience"
 import { Contact } from "@/components/sections/Contact"
 import { Preloader } from "@/components/preloader"
@@ -75,22 +76,23 @@ export default function Portfolio() {
 
   return (
     <div className="min-h-screen bg-background text-foreground relative">
+      <StructuredData />
       <Preloader />
       <BrowserNotice />
       {/* Fixed position galaxy background that spans the entire viewport */}
       <div className="fixed inset-0 w-full h-full z-0">
         <GalaxyBackground scrollY={scrollY} />
       </div>
-      
+
       {/* Contact Slider - replaces Navbar */}
       <ContactSlider />
-      
+
       {/* Main content with proper z-index to appear above background */}
       <div className="relative z-10" style={{ willChange: 'auto' }}>
         <Hero scrollY={scrollY} componentScale={componentScale} onScrollTo={scrollToSection} />
         <About scrollY={scrollY} componentScale={componentScale} />
         <Projects scrollY={scrollY} componentScale={componentScale} />
-        <Skills scrollY={scrollY} componentScale={componentScale} />
+        <Design scrollY={scrollY} componentScale={componentScale} />
         <Experience scrollY={scrollY} componentScale={componentScale} />
         <Contact scrollY={scrollY} componentScale={componentScale} />
       </div>
@@ -103,9 +105,9 @@ export default function Portfolio() {
             <BlackHole />
           </div>
           {/* 3D Model Attribution */}
-          <a 
-            href="https://sketchfab.com/3d-models/blackhole-74cbeaeae2174a218fe9455d77902b5c" 
-            target="_blank" 
+          <a
+            href="https://sketchfab.com/3d-models/blackhole-74cbeaeae2174a218fe9455d77902b5c"
+            target="_blank"
             rel="noopener noreferrer"
             className="absolute bottom-2 right-2 text-[10px] text-white/20 hover:text-white/50 transition-colors duration-300"
             title="3D Model by rubykamen on Sketchfab"
@@ -118,7 +120,7 @@ export default function Portfolio() {
       {/* Scroll to top button - Simple arrow for all devices */}
       <motion.button
         initial={{ opacity: 0, y: 100 }}
-        animate={{ 
+        animate={{
           opacity: scrollY > 500 ? 1 : 0,
           y: scrollY > 500 ? [0, -4, 0] : 100,
           pointerEvents: scrollY > 500 ? "auto" : "none"
