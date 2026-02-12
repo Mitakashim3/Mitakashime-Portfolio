@@ -193,7 +193,7 @@ export const PROJECTS: Project[] = [
     ],
     "image": "/VestiFlowAutomate.png",
     "imageAlt": "VestiFlow AI fashion design platform showing AI-powered clothing generator with Next.js frontend and ComfyUI integration",
-    "logo": "/project_logos/VestiFlow.png",
+    "logo": "/project_logos/VestiFLow.png",
     "images": ["/VestiFlowDashboard.png", "/VestiFlowGenerate.png", "/VestiFlowUpload.png"],
     "href": "https://github.com/Mitakashim3/VestiFlow-AI"
   },
