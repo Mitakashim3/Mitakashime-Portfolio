@@ -230,11 +230,29 @@ const ShootingStar = ({ project, id, startX, startY, duration, onComplete }: Sho
     }, [isHovered, isFlipped])
 
     const handleMouseEnter = () => {
-        setIsHovered(true)
+        if (!isMobile) {
+            setIsHovered(true)
+        }
     }
 
     const handleMouseLeave = () => {
-        setIsHovered(false)
+        if (!isMobile) {
+            setIsHovered(false)
+        }
+    }
+
+    const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
+        e.stopPropagation()
+        if (isMobile) {
+            // On mobile, directly show and flip the card
+            setIsHovered(true)
+            setIsFlipped(true)
+        } else {
+            // On desktop, just flip if already hovered
+            if (isHovered) {
+                setIsFlipped(!isFlipped)
+            }
+        }
     }
 
     const handleFlip = () => {
@@ -263,7 +281,7 @@ const ShootingStar = ({ project, id, startX, startY, duration, onComplete }: Sho
             }}
         >
             {/* Comet Container */}
-            <div className="relative">
+            <div className="relative" onClick={handleClick} onTouchEnd={handleClick}>
                 {/* === COMET TRAIL (always visible when not hovered/flipped) === */}
                 {/* TRAIL ANGLE: Dynamically calculated based on viewport dimensions */}
                 {!isHovered && !isFlipped && (
@@ -366,9 +384,14 @@ const ShootingStar = ({ project, id, startX, startY, duration, onComplete }: Sho
                     }}
                     transition={{ duration: 0.3 }}
                     className={cn(
-                        "relative cursor-pointer",
-                        isMobile ? "w-14 h-14" : "w-20 h-20"
+                        "relative cursor-pointer touch-none",
+                        isMobile ? "w-16 h-16" : "w-20 h-20"
                     )}
+                    style={{
+                        // Increase touch target size for better mobile interaction
+                        minWidth: isMobile ? '64px' : undefined,
+                        minHeight: isMobile ? '64px' : undefined,
+                    }}
                 >
                     {/* Fire/Blast effect around logo */}
                     <div className="absolute inset-0 rounded-full animate-pulse" style={{
@@ -431,6 +454,10 @@ const ShootingStar = ({ project, id, startX, startY, duration, onComplete }: Sho
                                         isFlipped ? "bg-black/50" : "bg-black/20"
                                     )}
                                     onClick={(e) => {
+                                        e.stopPropagation()
+                                        handleClose()
+                                    }}
+                                    onTouchEnd={(e) => {
                                         e.stopPropagation()
                                         handleClose()
                                     }}
