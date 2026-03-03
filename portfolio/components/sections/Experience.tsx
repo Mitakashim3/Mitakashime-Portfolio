@@ -67,9 +67,9 @@ export const Experience = memo(function Experience({ scrollY, componentScale }: 
   }, { scope: containerRef })
 
   return (
-    <section 
+    <section
       ref={containerRef}
-      className="py-12 sm:py-24 px-4 md:px-8 relative z-40" 
+      className="py-12 sm:py-24 px-4 md:px-8 relative z-40"
       style={{ transform: `scale(${componentScale})` }}
     >
       <div className="max-w-4xl mx-auto">
@@ -77,11 +77,11 @@ export const Experience = memo(function Experience({ scrollY, componentScale }: 
 
         <div className="space-y-8">
           {EXPERIENCE.map((exp, i) => (
-            <div 
+            <div
               key={exp.title}
-              className="experience-card relative p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl bg-black/20 backdrop-blur-md border border-white/10 hover:border-primary/30 transition-colors duration-300">
+              className="experience-card relative p-4 sm:p-6 md:p-8 rounded-xl sm:rounded-2xl bg-black/35 backdrop-blur-md border border-white/10 hover:border-primary/40 transition-all duration-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
               {/* Animated left border accent */}
-              <div 
+              <div
                 className="card-border absolute left-0 top-0 w-1 bg-gradient-to-b from-primary to-primary/40 rounded-full"
                 style={{ height: "0%" }}
               />
@@ -89,18 +89,18 @@ export const Experience = memo(function Experience({ scrollY, componentScale }: 
               <div className="ml-4">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between mb-4 gap-2">
                   <div>
-                    <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-1 font-sans">
+                    <h3 className="text-base sm:text-xl md:text-2xl font-bold text-[#FFFEF2] mb-1 font-sans [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">
                       {exp.title}
                     </h3>
-                    <p className="text-primary font-semibold font-sans text-base sm:text-lg">
+                    <p className="text-primary font-semibold font-sans text-sm sm:text-lg">
                       {exp.organization}
                     </p>
                   </div>
-                  <span className="font-mono text-xs sm:text-sm text-zinc-400 md:text-base">
+                  <span className="font-mono text-xs sm:text-sm text-zinc-300 bg-white/5 border border-white/10 rounded-full px-3 py-1 w-fit">
                     {exp.period}
                   </span>
                 </div>
-                <p className="leading-relaxed text-zinc-300 font-sans">
+                <p className="leading-relaxed text-zinc-100 font-sans text-sm sm:text-base [text-shadow:0_1px_4px_rgba(0,0,0,0.6)]">
                   {exp.description}
                 </p>
               </div>

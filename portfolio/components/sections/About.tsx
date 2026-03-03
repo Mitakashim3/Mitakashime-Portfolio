@@ -58,7 +58,7 @@ export const About = memo(function About({ scrollY, componentScale }: Props) {
     <section
       id="about"
       ref={containerRef}
-      className="py-12 sm:py-20 px-4 sm:px-6 relative z-40 overflow-hidden"
+      className="pb-12 pt-4 sm:pb-20 sm:pt-8 px-4 sm:px-6 relative z-40 overflow-hidden -mt-[10vh] md:-mt-[20vh]"
       style={{ transform: `scale(${componentScale})` }}
     >
       {/* Background Effects */}
@@ -102,8 +102,8 @@ export const About = memo(function About({ scrollY, componentScale }: Props) {
 
             <div className="space-y-4">
               {ABOUT.paragraphs.map((p, idx) => (
-                <div key={idx} className="mb-4">
-                  <AnimatedText className="text-sm sm:text-lg leading-relaxed font-mono text-[#FFFEF2] drop-shadow-[0_0_10px_rgba(255,254,242,0.5)]">
+                <div key={idx} className="mb-4 backdrop-blur-[1px] bg-black/20 rounded-xl p-3 sm:p-0 sm:bg-transparent sm:backdrop-blur-none">
+                  <AnimatedText className="text-sm sm:text-base leading-relaxed font-mono text-[#FFFEF2] [text-shadow:0_1px_8px_rgba(0,0,0,0.9),0_0_20px_rgba(255,254,242,0.2)]">
                     {p}
                   </AnimatedText>
                 </div>
@@ -115,7 +115,7 @@ export const About = memo(function About({ scrollY, componentScale }: Props) {
           {/* Avatar / 3D Pop-out Effect */}
           <div className="flex justify-center order-1 md:order-2 relative">
             <motion.div
-              className="relative w-56 h-56 sm:w-72 sm:h-72 md:w-96 md:h-96 group perspective-1000"
+              className="relative w-48 h-48 sm:w-72 sm:h-72 md:w-96 md:h-96 group perspective-1000"
               initial={{ opacity: 0, scale: 0.8, rotateY: -30 }}
               whileInView={{ opacity: 1, scale: 1, rotateY: 0 }}
               transition={{ duration: 1, type: "spring" }}

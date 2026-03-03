@@ -21,17 +21,17 @@ const HORIZONTAL_TRAVEL_DISTANCE = -150 // vw units, negative = moving left
 // The comet moves down-left, so the tail should point up-right (opposite direction)
 function calculateTrailAngle(): number {
     if (typeof window === 'undefined') return -35 // Default for SSR
-    
+
     // Convert vw/vh to actual pixels for accurate angle calculation
     const xPixels = HORIZONTAL_TRAVEL_DISTANCE * window.innerWidth / 100
     const yPixels = VERTICAL_TRAVEL_DISTANCE * window.innerHeight / 100
-    
+
     // Calculate movement direction angle in radians
     const movementAngle = Math.atan2(yPixels, xPixels)
-    
+
     // The trail points opposite to movement (add 180 degrees / PI radians)
     const trailAngle = movementAngle + Math.PI
-    
+
     // Convert to degrees
     return trailAngle * (180 / Math.PI)
 }
@@ -182,17 +182,17 @@ const ShootingStar = ({ project, id, startX, startY, duration, onComplete }: Sho
 
     useEffect(() => {
         setIsMounted(true)
-        
+
         // Calculate initial trail angle and check mobile
         setTrailAngle(calculateTrailAngle())
         setIsMobile(window.innerWidth < 640)
-        
+
         // Recalculate on resize
         const handleResize = () => {
             setTrailAngle(calculateTrailAngle())
             setIsMobile(window.innerWidth < 640)
         }
-        
+
         window.addEventListener('resize', handleResize)
         return () => window.removeEventListener('resize', handleResize)
     }, [])
@@ -241,12 +241,16 @@ const ShootingStar = ({ project, id, startX, startY, duration, onComplete }: Sho
         }
     }
 
-    const handleClick = (e: React.MouseEvent | React.TouchEvent) => {
+    const handleInteraction = (e: React.MouseEvent | React.TouchEvent | React.PointerEvent) => {
+        // Stop event propagation to prevent background from catching the click
         e.stopPropagation()
+
         if (isMobile) {
-            // On mobile, directly show and flip the card
+            // On mobile, show and flip immediately
             setIsHovered(true)
             setIsFlipped(true)
+            // Pause animation when flipped on mobile
+            animationRef.current?.pause()
         } else {
             // On desktop, just flip if already hovered
             if (isHovered) {
@@ -278,10 +282,11 @@ const ShootingStar = ({ project, id, startX, startY, duration, onComplete }: Sho
             onMouseLeave={handleMouseLeave}
             style={{
                 zIndex: isHovered || isFlipped ? 50 : 20,
+                touchAction: "none" // Prevents browser from treating this as a scroll start
             }}
         >
             {/* Comet Container */}
-            <div className="relative" onClick={handleClick} onTouchEnd={handleClick}>
+            <div className="relative" onClick={handleInteraction} onTouchEnd={handleInteraction}>
                 {/* === COMET TRAIL (always visible when not hovered/flipped) === */}
                 {/* TRAIL ANGLE: Dynamically calculated based on viewport dimensions */}
                 {!isHovered && !isFlipped && (
@@ -385,27 +390,28 @@ const ShootingStar = ({ project, id, startX, startY, duration, onComplete }: Sho
                     transition={{ duration: 0.3 }}
                     className={cn(
                         "relative cursor-pointer touch-none",
-                        isMobile ? "w-16 h-16" : "w-20 h-20"
+                        isMobile ? "w-20 h-20" : "w-20 h-20" // Made mobile target the same size as desktop for easier tapping
                     )}
                     style={{
-                        // Increase touch target size for better mobile interaction
-                        minWidth: isMobile ? '64px' : undefined,
-                        minHeight: isMobile ? '64px' : undefined,
+                        // Significantly increase touch target size for better mobile interaction without changing visual size
+                        minWidth: isMobile ? '80px' : undefined,
+                        minHeight: isMobile ? '80px' : undefined,
+                        padding: isMobile ? '8px' : '0px', // Invisible padding increases touch area
                     }}
                 >
                     {/* Fire/Blast effect around logo */}
-                    <div className="absolute inset-0 rounded-full animate-pulse" style={{
+                    <div className="absolute inset-0 rounded-full animate-pulse pointer-events-none" style={{
                         background: 'radial-gradient(circle, rgba(251,146,60,0.8) 0%, rgba(234,88,12,0.4) 50%, transparent 70%)',
                         filter: isMobile ? 'blur(5px)' : 'blur(8px)',
                         transform: isMobile ? 'scale(1.5)' : 'scale(1.8)'
                     }} />
-                    <div className="absolute inset-0 rounded-full" style={{
+                    <div className="absolute inset-0 rounded-full pointer-events-none" style={{
                         background: 'radial-gradient(circle, rgba(253,224,71,0.6) 0%, rgba(251,146,60,0.3) 40%, transparent 60%)',
                         filter: isMobile ? 'blur(3px)' : 'blur(4px)',
                         transform: isMobile ? 'scale(1.3)' : 'scale(1.5)'
                     }} />
                     {/* Bright core glow */}
-                    <div className="absolute inset-0 rounded-full" style={{
+                    <div className="absolute inset-0 rounded-full pointer-events-none" style={{
                         background: 'radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(253,224,71,0.5) 30%, transparent 50%)',
                         filter: isMobile ? 'blur(1px)' : 'blur(2px)',
                         transform: 'scale(1.2)'
@@ -413,7 +419,7 @@ const ShootingStar = ({ project, id, startX, startY, duration, onComplete }: Sho
 
                     {/* The actual logo/image */}
                     <div className={cn(
-                        "relative rounded-full overflow-hidden border-2 border-orange-400/50 shadow-[0_0_20px_rgba(251,146,60,0.8)] bg-black/80",
+                        "relative rounded-full overflow-hidden border-2 border-orange-400/50 shadow-[0_0_20px_rgba(251,146,60,0.8)] bg-black/80 pointer-events-none",
                         isMobile ? "w-14 h-14" : "w-20 h-20"
                     )}>
                         {project.logo ? (
@@ -496,7 +502,7 @@ export function ShootingStarProjects() {
     // Lanes are defined by starting Y position ranges.
     // 3 lanes on desktop, 2 lanes on mobile for better performance
     const lanes = useRef<number[]>([0, 0, 0])
-    
+
     // Track current project index for sequential display
     const projectIndex = useRef<number>(0)
 
@@ -576,7 +582,7 @@ export function ShootingStarProjects() {
         <div
             ref={containerRef}
             className="relative w-full h-[600px] sm:h-[800px] overflow-hidden"
-            style={{ 
+            style={{
                 maskImage: 'linear-gradient(to bottom, transparent 0%, black 5%, black 90%, transparent 100%)',
                 WebkitMaskImage: 'linear-gradient(to bottom, transparent 0%, black 5%, black 90%, transparent 100%)'
             }}
@@ -590,7 +596,7 @@ export function ShootingStarProjects() {
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-[10px] sm:text-xs text-center pointer-events-none opacity-50">
                 <span className="hidden sm:inline">Catch the shooting star!</span>
                 <span className="sm:hidden">Tap the comet!</span>
-                <br /> 
+                <br />
                 <span className="hidden sm:inline">Hover to pause, click to explore</span>
                 <span className="sm:hidden">Tap to explore projects</span>
             </div>

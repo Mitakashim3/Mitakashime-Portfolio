@@ -51,10 +51,10 @@ export const Contact = memo(function Contact({ scrollY, componentScale }: Props)
   }), [])
 
   return (
-    <section 
-      id="contact" 
+    <section
+      id="contact"
       ref={containerRef}
-      className="py-12 sm:py-20 px-4 sm:px-6 mb-12 sm:mb-20 relative z-40 overflow-hidden" 
+      className="py-12 sm:py-20 px-4 sm:px-6 mb-12 sm:mb-20 relative z-40 overflow-hidden"
       style={{ transform: `scale(${componentScale})` }}
     >
       {/* Background Effects */}
@@ -64,8 +64,8 @@ export const Contact = memo(function Contact({ scrollY, componentScale }: Props)
             key={i}
             className="absolute w-1 h-1 bg-primary/40 rounded-full"
             initial={{ opacity: 0, scale: 0 }}
-            animate={{ 
-              opacity: [0, 1, 0], 
+            animate={{
+              opacity: [0, 1, 0],
               scale: [0, 1.5, 0],
               y: [0, -100]
             }}
@@ -84,7 +84,7 @@ export const Contact = memo(function Contact({ scrollY, componentScale }: Props)
         ))}
       </div>
 
-      <motion.div 
+      <motion.div
         className="max-w-5xl mx-auto relative z-10"
         variants={containerVariants}
         initial="hidden"
@@ -96,8 +96,8 @@ export const Contact = memo(function Contact({ scrollY, componentScale }: Props)
         <div className="grid md:grid-cols-2 gap-8 sm:gap-12 items-start">
           <motion.div variants={itemVariants} className="space-y-8">
             <div>
-              <h3 className="text-lg sm:text-2xl font-semibold mb-3 sm:mb-6 font-sans">Let's Connect</h3>
-              <AnimatedText className="text-sm sm:text-lg mb-4 sm:mb-8 leading-relaxed font-mono">
+              <h3 className="text-lg sm:text-2xl font-semibold mb-3 sm:mb-6 font-sans text-[#FFFEF2] [text-shadow:0_1px_8px_rgba(0,0,0,0.8)]">Let's Connect</h3>
+              <AnimatedText className="text-sm sm:text-lg mb-4 sm:mb-8 leading-relaxed font-mono text-zinc-100 [text-shadow:0_1px_6px_rgba(0,0,0,0.7)]">
                 I'm always interested in new opportunities, collaborations, and interesting projects. Whether you have a
                 question or just want to say hi, feel free to reach out across the digital galaxy!
               </AnimatedText>
@@ -108,7 +108,7 @@ export const Contact = memo(function Contact({ scrollY, componentScale }: Props)
                 href={`mailto:${LINKS.email}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-4 p-3 sm:p-4 rounded-lg bg-card/30 border border-primary/10 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group"
+                className="flex items-center gap-4 p-3 sm:p-4 rounded-lg bg-black/30 border border-primary/10 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group backdrop-blur-sm"
               >
                 <div className="p-2 sm:p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
                   <Mail className="h-4 w-4 sm:h-6 sm:w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
@@ -122,7 +122,7 @@ export const Contact = memo(function Contact({ scrollY, componentScale }: Props)
                 href={LINKS.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 sm:gap-4 p-2.5 sm:p-4 rounded-lg bg-card/30 border border-primary/10 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group"
+                className="flex items-center gap-3 sm:gap-4 p-2.5 sm:p-4 rounded-lg bg-black/30 border border-primary/10 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group backdrop-blur-sm"
               >
                 <div className="p-2 sm:p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
                   <Github className="h-4 w-4 sm:h-6 sm:w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
@@ -136,7 +136,7 @@ export const Contact = memo(function Contact({ scrollY, componentScale }: Props)
                 href={`https://${LINKS.linkedin.replace(/^https?:\/\//, "")}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 sm:gap-4 p-2.5 sm:p-4 rounded-lg bg-card/30 border border-primary/10 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group"
+                className="flex items-center gap-3 sm:gap-4 p-2.5 sm:p-4 rounded-lg bg-black/30 border border-primary/10 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group backdrop-blur-sm"
               >
                 <div className="p-2 sm:p-3 rounded-full bg-primary/10 group-hover:bg-primary/20 transition-colors">
                   <Linkedin className="h-4 w-4 sm:h-6 sm:w-6 text-primary group-hover:scale-110 transition-transform duration-300" />
@@ -150,8 +150,8 @@ export const Contact = memo(function Contact({ scrollY, componentScale }: Props)
 
           <motion.div variants={itemVariants}>
             <Card className={cn(
-              "p-4 sm:p-8 border-primary/20 shadow-[0_0_50px_-12px_rgba(0,255,0,0.1)] hover:shadow-[0_0_50px_-12px_rgba(0,255,0,0.2)] transition-all duration-500",
-              chrome.supportsBackdropFilter ? "bg-black/40 backdrop-blur-md" : "bg-black/90"
+              "p-4 sm:p-8 border-primary/20 shadow-[0_0_50px_-12px_rgba(0,255,0,0.15)] hover:shadow-[0_0_50px_-12px_rgba(0,255,0,0.25)] transition-all duration-500",
+              chrome.supportsBackdropFilter ? "bg-black/50 backdrop-blur-md" : "bg-black/90"
             )}>
               <form
                 className="space-y-4 sm:space-y-6"
@@ -178,30 +178,30 @@ export const Contact = memo(function Contact({ scrollY, componentScale }: Props)
                   }
                 }}>
                 <div className="space-y-2">
-                  <Input 
-                    placeholder="Your Name" 
-                    required 
-                    className="bg-background/50 border-primary/20 focus:border-primary/80 h-11 sm:h-12 font-mono transition-all duration-300" 
+                  <Input
+                    placeholder="Your Name"
+                    required
+                    className="bg-background/40 border-primary/30 focus:border-primary focus:ring-1 focus:ring-primary/50 h-11 sm:h-12 font-mono transition-all duration-300 text-[#FFFEF2] placeholder:text-zinc-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Input 
-                    type="email" 
-                    placeholder="Your Email" 
-                    required 
-                    className="bg-background/50 border-primary/20 focus:border-primary/80 h-11 sm:h-12 font-mono transition-all duration-300" 
+                  <Input
+                    type="email"
+                    placeholder="Your Email"
+                    required
+                    className="bg-background/40 border-primary/30 focus:border-primary focus:ring-1 focus:ring-primary/50 h-11 sm:h-12 font-mono transition-all duration-300 text-[#FFFEF2] placeholder:text-zinc-500"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Textarea 
-                    placeholder="Your Message" 
-                    required 
-                    className="bg-background/50 border-primary/20 focus:border-primary/80 min-h-[100px] sm:min-h-[150px] resize-none font-mono text-sm sm:text-base transition-all duration-300" 
+                  <Textarea
+                    placeholder="Your Message"
+                    required
+                    className="bg-background/40 border-primary/30 focus:border-primary focus:ring-1 focus:ring-primary/50 min-h-[100px] sm:min-h-[150px] resize-none font-mono text-sm sm:text-base transition-all duration-300 text-[#FFFEF2] placeholder:text-zinc-500"
                   />
                 </div>
-                <Button 
-                  type="submit" 
-                  className="w-full h-10 sm:h-12 bg-primary hover:bg-primary/90 text-black font-bold text-sm sm:text-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-[0_0_20px_rgba(0,255,0,0.3)] hover:shadow-[0_0_30px_rgba(0,255,0,0.5)]"
+                <Button
+                  type="submit"
+                  className="w-full h-10 sm:h-12 bg-primary hover:bg-primary/90 text-black font-bold text-sm sm:text-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 shadow-[0_0_20px_rgba(0,255,0,0.35)] hover:shadow-[0_0_35px_rgba(0,255,0,0.55)]"
                 >
                   <Send className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                   Send Message

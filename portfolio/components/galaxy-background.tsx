@@ -13,13 +13,13 @@ export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { sc
   const capabilities = useDeviceCapabilities()
   const chrome = useChromeVersion()
 
-  // Force a static background on mobile or older Chrome versions for performance
-  const forceStaticBackground = capabilities.isMobile || (chrome.isChrome && chrome.version !== null && chrome.version < 90)
-  
-  // Use modern gradient on mobile instead of static image
-  const useMobileGradient = capabilities.isMobile
+  // Force a static background only for very old Chrome versions - mobile now gets video too!
+  const forceStaticBackground = chrome.isChrome && chrome.version !== null && chrome.version < 90
 
-  // Auto-disable video on mobile (handsets) by default for performance
+  // Show the gradient skeleton only while the video hasn't loaded yet on mobile
+  const useMobileGradient = capabilities.isMobile && !isVideoLoaded
+
+  // Only force static on old Chrome
   useEffect(() => {
     if (forceStaticBackground) {
       setIsVideoEnabled(false)
@@ -33,9 +33,12 @@ export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { sc
     const video = videoRef.current
 
     // Optimize video playback based on device
-    if (capabilities.isMobile || capabilities.isLowEnd) {
-      // Reduce quality for mobile/low-end devices
-      video.style.filter = "blur(0.5px)" // Slight blur to hide compression artifacts
+    if (capabilities.isMobile) {
+      // On mobile: no blur needed, just ensure crisp playback
+      video.setAttribute('playsinline', 'true')
+      video.setAttribute('webkit-playsinline', 'true')
+    } else if (capabilities.isLowEnd) {
+      video.style.filter = "blur(0.5px)"
     }
 
     // Intersection observer for lazy loading
@@ -83,7 +86,7 @@ export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { sc
         // Re-enable: reload and play
         videoRef.current.src = "/Galaxyvideo-loop.mp4"
         videoRef.current.load()
-        videoRef.current.play().catch(() => {})
+        videoRef.current.play().catch(() => { })
         setIsVideoLoaded(true)
       } else if (videoRef.current) {
         // Disable: pause and clear
@@ -116,17 +119,17 @@ export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { sc
 
   return (
     <>
-      {/* Video Toggle Button - Only show on mobile/low-end devices */}
-      {capabilities.isLowEnd && !forceStaticBackground && (
+      {/* Video Toggle Button - Show on mobile or low-end devices */}
+      {(capabilities.isMobile || capabilities.isLowEnd) && !forceStaticBackground && (
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
           onClick={toggleVideo}
-          className="fixed bottom-20 left-4 z-60 p-3 rounded-full bg-background/80 backdrop-blur-sm border border-primary/30 text-primary hover:bg-primary/20 transition-colors touch-manipulation"
+          className="fixed bottom-6 right-6 z-[100] p-3 sm:p-4 rounded-full bg-black/60 backdrop-blur-md border border-primary/40 text-primary hover:bg-primary/20 transition-colors touch-manipulation shadow-[0_0_15px_rgba(16,185,129,0.3)]"
           aria-label={isVideoEnabled ? "Turn off background video" : "Turn on background video"}
         >
-          {isVideoEnabled ? <VideoOff className="w-5 h-5" /> : <Video className="w-5 h-5" />}
+          {isVideoEnabled ? <VideoOff className="w-5 h-5 sm:w-6 sm:h-6" /> : <Video className="w-5 h-5 sm:w-6 sm:h-6" />}
         </motion.button>
       )}
 
@@ -139,12 +142,12 @@ export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { sc
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: animationDuration }}
-            poster="/galaxy-bg.jpg"
+            poster="/Clark_Profile_Picture.png"
             autoPlay
             loop
             muted
             playsInline
-            preload="metadata"
+            preload="none"
             className="fixed inset-0 w-full h-full object-cover z-0 pointer-events-none"
             style={{
               transform: `scale(${scale})`,
@@ -161,29 +164,29 @@ export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { sc
             className="fixed inset-0 w-full h-full z-0 pointer-events-none"
           >
             {/* Dark space base gradient */}
-            <div 
+            <div
               className="absolute inset-0"
               style={{
                 background: "linear-gradient(180deg, #050510 0%, #0a0a1e 20%, #0d1528 45%, #0a1220 65%, #080818 85%, #050510 100%)",
               }}
             />
-            
+
             {/* Subtle nebula glow - positioned to add depth */}
-            <div 
+            <div
               className="absolute top-[20%] left-[30%] w-[250px] h-[250px] rounded-full opacity-15"
               style={{
                 background: 'radial-gradient(circle, rgba(56,189,248,0.25) 0%, rgba(139,92,246,0.1) 40%, transparent 70%)',
                 filter: 'blur(60px)'
               }}
             />
-            <div 
+            <div
               className="absolute top-[60%] right-[20%] w-[200px] h-[200px] rounded-full opacity-10"
               style={{
                 background: 'radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(56,189,248,0.08) 50%, transparent 70%)',
                 filter: 'blur(50px)'
               }}
             />
-            
+
             {/* Static stars layer - pure CSS, zero JS overhead */}
             <div className="absolute inset-0" style={{
               backgroundImage: `
@@ -214,7 +217,7 @@ export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { sc
                 radial-gradient(0.5px 0.5px at 88% 62%, rgba(255,255,255,0.3) 50%, transparent 50%)
               `
             }} />
-            
+
             {/* Twinkling stars - minimal CSS animation */}
             <div className="absolute w-1 h-1 rounded-full bg-white/90 top-[15%] left-[25%] animate-pulse" style={{ animationDuration: '2s' }} />
             <div className="absolute w-1 h-1 rounded-full bg-white/80 top-[45%] left-[75%] animate-pulse" style={{ animationDuration: '3s', animationDelay: '1s' }} />
@@ -237,9 +240,9 @@ export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { sc
           />
         )}
       </AnimatePresence>
-      
-      {/* Consistent dark overlay for uniform appearance across all sections - lighter on mobile */}
-      <div className={`fixed inset-0 z-0 pointer-events-none ${useMobileGradient ? 'bg-black/20' : 'bg-black/40'}`} />
+
+      {/* Consistent dark overlay - lighter so the video/gradient shows through vividly */}
+      <div className={`fixed inset-0 z-0 pointer-events-none ${capabilities.isMobile ? 'bg-black/20' : 'bg-black/30'}`} />
     </>
   )
 })
