@@ -158,26 +158,20 @@ export const Hero = memo(function Hero({ scrollY, componentScale, onScrollTo }: 
               variants={containerVariants(0.05)}
               className="flex flex-col items-center gap-3 absolute w-full px-6"
             >
-              <div className="flex flex-col items-center">
+              <div className="flex flex-col items-center gap-2">
                 <motion.h1
                   variants={containerVariants(0.05)}
                   className="text-5xl font-bold font-sans text-center text-[#FFFEF2] drop-shadow-[0_2px_20px_rgba(0,0,0,0.9)] [text-shadow:0_2px_20px_rgba(0,0,0,0.9),0_0_40px_rgba(255,254,242,0.3)]"
                 >
                   <AnimatedText text="Hi There!" variants={slideInVariants} />
                 </motion.h1>
+                <motion.p
+                  variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { delay: 0.5, duration: 0.4 } } }}
+                  className="text-2xl font-bold font-sans text-[#FFFEF2] drop-shadow-[0_2px_20px_rgba(0,0,0,0.9)] [text-shadow:0_2px_20px_rgba(0,0,0,0.9),0_0_40px_rgba(255,254,242,0.3)]"
+                >
+                  Welcome!
+                </motion.p>
               </div>
-              <motion.p
-                variants={{ hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { delay: 0.5, duration: 0.4 } } }}
-                className="text-lg font-mono text-primary/90 drop-shadow-[0_0_12px_rgba(16,185,129,0.6)]"
-              >
-                Welcome!
-              </motion.p>
-              <motion.p
-                variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { delay: 0.9, duration: 0.4 } } }}
-                className="text-xs text-white/50 font-mono mt-2"
-              >
-                scroll to continue ↓
-              </motion.p>
             </motion.div>
           )
         case 1:

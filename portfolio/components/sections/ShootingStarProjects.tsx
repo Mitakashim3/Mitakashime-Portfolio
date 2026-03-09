@@ -45,7 +45,7 @@ type ShootingStarProps = {
     onComplete: (id: string) => void
 }
 
-const ProjectCard = ({ project, isFlipped, onFlip, onClose }: { project: Project, isFlipped: boolean, onFlip: () => void, onClose: () => void }) => {
+const ProjectCard = ({ project, isFlipped, onFlip, onClose, isMobile }: { project: Project, isFlipped: boolean, onFlip: () => void, onClose: () => void, isMobile: boolean }) => {
     return (
         <div
             className={cn(
@@ -69,15 +69,19 @@ const ProjectCard = ({ project, isFlipped, onFlip, onClose }: { project: Project
             >
                 {/* Front */}
                 <div
-                    className="absolute inset-0 w-full h-full backface-hidden rounded-xl border border-primary/30 bg-slate-900/90 p-4 sm:p-6 flex flex-col shadow-[0_0_15px_rgba(120,50,255,0.3)] backdrop-blur-md"
+                    className={cn(
+                        "absolute inset-0 w-full h-full backface-hidden rounded-xl border border-primary/30 bg-slate-900/95 p-4 sm:p-6 flex flex-col backdrop-blur-md",
+                        // Only apply heavy shadow on desktop for performance
+                        !isMobile ? "shadow-[0_0_15px_rgba(120,50,255,0.3)]" : "shadow-lg"
+                    )}
                     style={{ backfaceVisibility: "hidden" }}
                 >
                     {/* Shooting Star Trail Effect (only visible when not flipped and moving) */}
-                    {!isFlipped && (
-                        <div className="absolute -top-20 -right-20 w-40 h-full bg-gradient-to-b from-transparent via-primary/20 to-transparent rotate-45 blur-xl pointer-events-none opacity-50" />
+                    {!isFlipped && !isMobile && (
+                        <div className="absolute -top-20 -right-20 w-40 h-full bg-gradient-to-b from-transparent via-primary/20 to-transparent rotate-45 blur-xl pointer-events-none opacity-50 transition-opacity" />
                     )}
 
-                    <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary animate-pulse" />
+                    <div className={cn("absolute top-2 right-2 w-2 h-2 rounded-full bg-primary", !isMobile && "animate-pulse")} />
                     <div className="text-[10px] sm:text-xs font-orbitron text-accent mb-1 sm:mb-2">PROJECT</div>
                     <h3 className="text-lg sm:text-2xl font-bold text-white mb-2 sm:mb-3 line-clamp-2">{project.title}</h3>
 
@@ -106,7 +110,11 @@ const ProjectCard = ({ project, isFlipped, onFlip, onClose }: { project: Project
 
                 {/* Back */}
                 <div
-                    className="absolute inset-0 w-full h-full backface-hidden rounded-xl border border-secondary/50 bg-slate-900/95 p-4 sm:p-6 flex flex-col shadow-[0_0_25px_rgba(50,200,255,0.4)]"
+                    className={cn(
+                        "absolute inset-0 w-full h-full backface-hidden rounded-xl border border-secondary/50 bg-slate-900/98 p-4 sm:p-6 flex flex-col",
+                        // Only apply heavy shadow on desktop for performance
+                        !isMobile ? "shadow-[0_0_25px_rgba(50,200,255,0.4)]" : "shadow-xl"
+                    )}
                     style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
                 >
                     <button
@@ -243,18 +251,21 @@ const ShootingStar = ({ project, id, startX, startY, duration, onComplete }: Sho
 
     const handleInteraction = (e: React.MouseEvent | React.TouchEvent | React.PointerEvent) => {
         // Stop event propagation to prevent background from catching the click
-        e.stopPropagation()
+        if (e.stopPropagation) e.stopPropagation();
 
-        if (isMobile) {
-            // On mobile, show and flip immediately
-            setIsHovered(true)
-            setIsFlipped(true)
-            // Pause animation when flipped on mobile
-            animationRef.current?.pause()
-        } else {
-            // On desktop, just flip if already hovered
-            if (isHovered) {
-                setIsFlipped(!isFlipped)
+        // Ensure we only flip if not already flipped, and optimize the render cycle
+        if (!isFlipped) {
+            if (isMobile) {
+                // On mobile, show and flip immediately
+                setIsHovered(true);
+                setIsFlipped(true);
+                // Pause animation immediately to save composite layers during flip
+                animationRef.current?.pause();
+            } else {
+                // On desktop, just flip if already hovered
+                if (isHovered) {
+                    setIsFlipped(true);
+                }
             }
         }
     }
@@ -285,210 +296,208 @@ const ShootingStar = ({ project, id, startX, startY, duration, onComplete }: Sho
                 touchAction: "none" // Prevents browser from treating this as a scroll start
             }}
         >
-            {/* Comet Container */}
-            <div className="relative" onClick={handleInteraction} onTouchEnd={handleInteraction}>
-                {/* === COMET TRAIL (always visible when not hovered/flipped) === */}
-                {/* TRAIL ANGLE: Dynamically calculated based on viewport dimensions */}
-                {!isHovered && !isFlipped && (
-                    <div className="absolute pointer-events-none" style={{ top: '50%', left: '50%', zIndex: -1 }}>
-                        {/* Core bright trail */}
+            {/* === COMET TRAIL (always visible when not hovered/flipped) === */}
+            {/* TRAIL ANGLE: Dynamically calculated based on viewport dimensions */}
+            {!isHovered && !isFlipped && (
+                <div className="absolute pointer-events-none" style={{ top: '50%', left: '50%', zIndex: -1 }}>
+                    {/* Core bright trail */}
+                    <div
+                        className="absolute origin-left"
+                        style={{
+                            width: isMobile ? '350px' : '700px',
+                            height: isMobile ? '4px' : '8px',
+                            transform: `rotate(${trailAngle}deg) translateY(-50%)`,
+                            background: 'linear-gradient(90deg, rgba(251,146,60,1) 0%, rgba(251,146,60,0.7) 10%, rgba(234,88,12,0.4) 30%, transparent 100%)',
+                            filter: isMobile ? 'blur(2px)' : 'blur(3px)'
+                        }}
+                    />
+                    {/* Secondary orange glow */}
+                    <div
+                        className="absolute origin-left"
+                        style={{
+                            width: isMobile ? '300px' : '600px',
+                            height: isMobile ? '18px' : '35px',
+                            transform: `rotate(${trailAngle}deg) translateY(-50%)`,
+                            background: 'linear-gradient(90deg, rgba(249,115,22,0.8) 0%, rgba(249,115,22,0.3) 25%, transparent 100%)',
+                            filter: isMobile ? 'blur(8px)' : 'blur(12px)'
+                        }}
+                    />
+                    {/* Wide outer yellow glow - DUST CLOUD */}
+                    <div
+                        className="absolute origin-left opacity-80"
+                        style={{
+                            width: isMobile ? '250px' : '500px',
+                            height: isMobile ? '40px' : '80px',
+                            transform: `rotate(${trailAngle}deg) translateY(-50%)`,
+                            background: 'linear-gradient(90deg, rgba(253,224,71,0.7) 0%, rgba(253,186,116,0.4) 25%, rgba(253,224,71,0.15) 50%, transparent 100%)',
+                            filter: isMobile ? 'blur(12px)' : 'blur(20px)'
+                        }}
+                    />
+                    {/* Extra wide dust tail - hidden on mobile for performance */}
+                    {!isMobile && (
                         <div
-                            className="absolute origin-left"
+                            className="absolute w-[400px] h-[120px] origin-left opacity-50"
                             style={{
-                                width: isMobile ? '350px' : '700px',
-                                height: isMobile ? '4px' : '8px',
                                 transform: `rotate(${trailAngle}deg) translateY(-50%)`,
-                                background: 'linear-gradient(90deg, rgba(251,146,60,1) 0%, rgba(251,146,60,0.7) 10%, rgba(234,88,12,0.4) 30%, transparent 100%)',
-                                filter: isMobile ? 'blur(2px)' : 'blur(3px)'
+                                background: 'linear-gradient(90deg, rgba(251,191,36,0.5) 0%, rgba(251,191,36,0.2) 30%, transparent 70%)',
+                                filter: 'blur(30px)'
                             }}
                         />
-                        {/* Secondary orange glow */}
-                        <div
-                            className="absolute origin-left"
-                            style={{
-                                width: isMobile ? '300px' : '600px',
-                                height: isMobile ? '18px' : '35px',
-                                transform: `rotate(${trailAngle}deg) translateY(-50%)`,
-                                background: 'linear-gradient(90deg, rgba(249,115,22,0.8) 0%, rgba(249,115,22,0.3) 25%, transparent 100%)',
-                                filter: isMobile ? 'blur(8px)' : 'blur(12px)'
-                            }}
-                        />
-                        {/* Wide outer yellow glow - DUST CLOUD */}
-                        <div
-                            className="absolute origin-left opacity-80"
-                            style={{
-                                width: isMobile ? '250px' : '500px',
-                                height: isMobile ? '40px' : '80px',
-                                transform: `rotate(${trailAngle}deg) translateY(-50%)`,
-                                background: 'linear-gradient(90deg, rgba(253,224,71,0.7) 0%, rgba(253,186,116,0.4) 25%, rgba(253,224,71,0.15) 50%, transparent 100%)',
-                                filter: isMobile ? 'blur(12px)' : 'blur(20px)'
-                            }}
-                        />
-                        {/* Extra wide dust tail - hidden on mobile for performance */}
-                        {!isMobile && (
+                    )}
+                    {/* Sparkle streaks - simplified on mobile */}
+                    <div
+                        className="absolute origin-left animate-pulse"
+                        style={{
+                            width: isMobile ? '150px' : '300px',
+                            height: isMobile ? '2px' : '3px',
+                            transform: `rotate(${trailAngle + 5}deg) translateY(-15px)`,
+                            background: 'linear-gradient(90deg, rgba(255,255,255,0.9) 0%, transparent 70%)',
+                            filter: 'blur(1px)'
+                        }}
+                    />
+                    {!isMobile && (
+                        <>
                             <div
-                                className="absolute w-[400px] h-[120px] origin-left opacity-50"
+                                className="absolute w-[250px] h-[3px] origin-left animate-pulse"
                                 style={{
-                                    transform: `rotate(${trailAngle}deg) translateY(-50%)`,
-                                    background: 'linear-gradient(90deg, rgba(251,191,36,0.5) 0%, rgba(251,191,36,0.2) 30%, transparent 70%)',
-                                    filter: 'blur(30px)'
+                                    transform: `rotate(${trailAngle - 5}deg) translateY(15px)`,
+                                    animationDelay: '0.2s',
+                                    background: 'linear-gradient(90deg, rgba(255,255,255,0.7) 0%, transparent 60%)',
+                                    filter: 'blur(1px)'
                                 }}
                             />
-                        )}
-                        {/* Sparkle streaks - simplified on mobile */}
-                        <div
-                            className="absolute origin-left animate-pulse"
-                            style={{
-                                width: isMobile ? '150px' : '300px',
-                                height: isMobile ? '2px' : '3px',
-                                transform: `rotate(${trailAngle + 5}deg) translateY(-15px)`,
-                                background: 'linear-gradient(90deg, rgba(255,255,255,0.9) 0%, transparent 70%)',
-                                filter: 'blur(1px)'
-                            }}
-                        />
-                        {!isMobile && (
-                            <>
-                                <div
-                                    className="absolute w-[250px] h-[3px] origin-left animate-pulse"
-                                    style={{
-                                        transform: `rotate(${trailAngle - 5}deg) translateY(15px)`,
-                                        animationDelay: '0.2s',
-                                        background: 'linear-gradient(90deg, rgba(255,255,255,0.7) 0%, transparent 60%)',
-                                        filter: 'blur(1px)'
-                                    }}
-                                />
-                                {/* Additional dust particles */}
-                                <div
-                                    className="absolute w-[200px] h-[2px] origin-left animate-pulse"
-                                    style={{
-                                        transform: `rotate(${trailAngle + 10}deg) translateY(-25px)`,
-                                        animationDelay: '0.4s',
-                                        background: 'linear-gradient(90deg, rgba(255,255,255,0.6) 0%, transparent 50%)',
-                                        filter: 'blur(1px)'
-                                    }}
-                                />
-                                <div
-                                    className="absolute w-[180px] h-[2px] origin-left animate-pulse"
-                                    style={{
-                                        transform: `rotate(${trailAngle - 5}deg) translateY(25px)`,
-                                        animationDelay: '0.6s',
-                                        background: 'linear-gradient(90deg, rgba(255,255,255,0.5) 0%, transparent 45%)',
-                                        filter: 'blur(1px)'
-                                    }}
-                                />
-                            </>
-                        )}
-                    </div>
-                )}
-
-                {/* === COMET HEAD (Logo with fire effect) === */}
-                <motion.div
-                    animate={{
-                        scale: isHovered || isFlipped ? 0 : 1,
-                        opacity: isHovered || isFlipped ? 0 : 1
-                    }}
-                    transition={{ duration: 0.3 }}
-                    className={cn(
-                        "relative cursor-pointer touch-none",
-                        isMobile ? "w-20 h-20" : "w-20 h-20" // Made mobile target the same size as desktop for easier tapping
+                            {/* Additional dust particles */}
+                            <div
+                                className="absolute w-[200px] h-[2px] origin-left animate-pulse"
+                                style={{
+                                    transform: `rotate(${trailAngle + 10}deg) translateY(-25px)`,
+                                    animationDelay: '0.4s',
+                                    background: 'linear-gradient(90deg, rgba(255,255,255,0.6) 0%, transparent 50%)',
+                                    filter: 'blur(1px)'
+                                }}
+                            />
+                            <div
+                                className="absolute w-[180px] h-[2px] origin-left animate-pulse"
+                                style={{
+                                    transform: `rotate(${trailAngle - 5}deg) translateY(25px)`,
+                                    animationDelay: '0.6s',
+                                    background: 'linear-gradient(90deg, rgba(255,255,255,0.5) 0%, transparent 45%)',
+                                    filter: 'blur(1px)'
+                                }}
+                            />
+                        </>
                     )}
-                    style={{
-                        // Significantly increase touch target size for better mobile interaction without changing visual size
-                        minWidth: isMobile ? '80px' : undefined,
-                        minHeight: isMobile ? '80px' : undefined,
-                        padding: isMobile ? '8px' : '0px', // Invisible padding increases touch area
-                    }}
-                >
-                    {/* Fire/Blast effect around logo */}
-                    <div className="absolute inset-0 rounded-full animate-pulse pointer-events-none" style={{
-                        background: 'radial-gradient(circle, rgba(251,146,60,0.8) 0%, rgba(234,88,12,0.4) 50%, transparent 70%)',
-                        filter: isMobile ? 'blur(5px)' : 'blur(8px)',
-                        transform: isMobile ? 'scale(1.5)' : 'scale(1.8)'
-                    }} />
-                    <div className="absolute inset-0 rounded-full pointer-events-none" style={{
-                        background: 'radial-gradient(circle, rgba(253,224,71,0.6) 0%, rgba(251,146,60,0.3) 40%, transparent 60%)',
-                        filter: isMobile ? 'blur(3px)' : 'blur(4px)',
-                        transform: isMobile ? 'scale(1.3)' : 'scale(1.5)'
-                    }} />
-                    {/* Bright core glow */}
-                    <div className="absolute inset-0 rounded-full pointer-events-none" style={{
-                        background: 'radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(253,224,71,0.5) 30%, transparent 50%)',
-                        filter: isMobile ? 'blur(1px)' : 'blur(2px)',
-                        transform: 'scale(1.2)'
-                    }} />
+                </div>
+            )}
 
-                    {/* The actual logo/image */}
-                    <div className={cn(
-                        "relative rounded-full overflow-hidden border-2 border-orange-400/50 shadow-[0_0_20px_rgba(251,146,60,0.8)] bg-black/80 pointer-events-none",
-                        isMobile ? "w-14 h-14" : "w-20 h-20"
-                    )}>
-                        {project.logo ? (
-                            <Image
-                                src={project.logo}
-                                alt={project.title}
-                                fill
-                                className="object-cover p-1" // Add padding for logo to not touch edges
-                            />
-                        ) : project.image ? (
-                            <Image
-                                src={project.image}
-                                alt={project.title}
-                                fill
-                                className="object-cover"
-                            />
-                        ) : (
-                            <div className="w-full h-full bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center">
-                                <Code className="w-8 h-8 text-white" />
-                            </div>
-                        )}
-                    </div>
-                </motion.div>
-
-                {/* === EXPANDED CARD (appears on hover) - RENDERED VIA PORTAL === */}
-                {isMounted && (isHovered || isFlipped || isClosing) && createPortal(
-                    <AnimatePresence>
-                        {(isHovered || isFlipped) && !isClosing ? (
-                            <>
-                                {/* Backdrop */}
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    transition={{ duration: 0.3, ease: "easeOut" }}
-                                    className={cn(
-                                        "fixed inset-0 z-[9998]",
-                                        isFlipped ? "bg-black/50" : "bg-black/20"
-                                    )}
-                                    onClick={(e) => {
-                                        e.stopPropagation()
-                                        handleClose()
-                                    }}
-                                    onTouchEnd={(e) => {
-                                        e.stopPropagation()
-                                        handleClose()
-                                    }}
-                                />
-
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.5 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.8, y: 20 }}
-                                    transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 25 }}
-                                    className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[9999]"
-                                >
-                                    <ProjectCard
-                                        project={project}
-                                        isFlipped={isFlipped}
-                                        onFlip={handleFlip}
-                                        onClose={handleClose}
-                                    />
-                                </motion.div>
-                            </>
-                        ) : null}
-                    </AnimatePresence>,
-                    document.body
+            {/* === COMET HEAD (Logo with fire effect) === */}
+            <motion.div
+                animate={{
+                    scale: isHovered || isFlipped ? 0 : 1,
+                    opacity: isHovered || isFlipped ? 0 : 1
+                }}
+                transition={{ duration: 0.3 }}
+                className={cn(
+                    "relative cursor-pointer touch-none",
+                    isMobile ? "w-20 h-20" : "w-20 h-20" // Made mobile target the same size as desktop for easier tapping
                 )}
-            </div>
+                style={{
+                    // Significantly increase touch target size for better mobile interaction without changing visual size
+                    minWidth: isMobile ? '80px' : undefined,
+                    minHeight: isMobile ? '80px' : undefined,
+                    padding: isMobile ? '8px' : '0px', // Invisible padding increases touch area
+                }}
+            >
+                {/* Fire/Blast effect around logo */}
+                <div className="absolute inset-0 rounded-full animate-pulse pointer-events-none" style={{
+                    background: 'radial-gradient(circle, rgba(251,146,60,0.8) 0%, rgba(234,88,12,0.4) 50%, transparent 70%)',
+                    filter: isMobile ? 'blur(5px)' : 'blur(8px)',
+                    transform: isMobile ? 'scale(1.5)' : 'scale(1.8)'
+                }} />
+                <div className="absolute inset-0 rounded-full pointer-events-none" style={{
+                    background: 'radial-gradient(circle, rgba(253,224,71,0.6) 0%, rgba(251,146,60,0.3) 40%, transparent 60%)',
+                    filter: isMobile ? 'blur(3px)' : 'blur(4px)',
+                    transform: isMobile ? 'scale(1.3)' : 'scale(1.5)'
+                }} />
+                {/* Bright core glow */}
+                <div className="absolute inset-0 rounded-full pointer-events-none" style={{
+                    background: 'radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(253,224,71,0.5) 30%, transparent 50%)',
+                    filter: isMobile ? 'blur(1px)' : 'blur(2px)',
+                    transform: 'scale(1.2)'
+                }} />
+
+                {/* The actual logo/image */}
+                <div className={cn(
+                    "relative rounded-full overflow-hidden border-2 border-orange-400/50 shadow-[0_0_20px_rgba(251,146,60,0.8)] bg-black/80 pointer-events-none",
+                    isMobile ? "w-14 h-14" : "w-20 h-20"
+                )}>
+                    {project.logo ? (
+                        <Image
+                            src={project.logo}
+                            alt={project.title}
+                            fill
+                            className="object-cover p-1" // Add padding for logo to not touch edges
+                        />
+                    ) : project.image ? (
+                        <Image
+                            src={project.image}
+                            alt={project.title}
+                            fill
+                            className="object-cover"
+                        />
+                    ) : (
+                        <div className="w-full h-full bg-gradient-to-br from-orange-500 to-yellow-400 flex items-center justify-center">
+                            <Code className="w-8 h-8 text-white" />
+                        </div>
+                    )}
+                </div>
+            </motion.div>
+
+            {/* === EXPANDED CARD (appears on hover) - RENDERED VIA PORTAL === */}
+            {isMounted && (isHovered || isFlipped || isClosing) && createPortal(
+                <AnimatePresence>
+                    {(isHovered || isFlipped) && !isClosing ? (
+                        <>
+                            {/* Backdrop */}
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.3, ease: "easeOut" }}
+                                className={cn(
+                                    "fixed inset-0 z-[9998]",
+                                    isFlipped ? "bg-black/50" : "bg-black/20"
+                                )}
+                                onClick={(e) => {
+                                    e.stopPropagation()
+                                    handleClose()
+                                }}
+                                onTouchEnd={(e) => {
+                                    e.stopPropagation()
+                                    handleClose()
+                                }}
+                            />
+
+                            <motion.div
+                                initial={{ opacity: 0, scale: 0.5 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.8, y: 20 }}
+                                transition={{ duration: 0.3, type: "spring", stiffness: 300, damping: 25 }}
+                                className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[9999]"
+                            >
+                                <ProjectCard
+                                    project={project}
+                                    isFlipped={isFlipped}
+                                    onFlip={handleFlip}
+                                    onClose={handleClose}
+                                    isMobile={isMobile}
+                                />
+                            </motion.div>
+                        </>
+                    ) : null}
+                </AnimatePresence>,
+                document.body
+            )}
         </motion.div>
     )
 }

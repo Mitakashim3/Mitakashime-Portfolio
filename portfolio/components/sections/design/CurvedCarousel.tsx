@@ -1,12 +1,15 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from "react"
-import { motion, useAnimation, useMotionValue } from "framer-motion"
+import React, { useEffect, useMemo, useRef, useState } from "react"
+import { motion, useMotionTemplate, useMotionValue, useTransform } from "framer-motion"
 import Image from "next/image"
 
-const CARD_WIDTH = 260
-const CARD_HEIGHT = 400
-const GAP = 20
+// Width drives size; height follows each image's aspect ratio.
+const DEFAULT_CARD_WIDTH = 520
+const DEFAULT_GAP = 40
+const DEFAULT_SPEED_PX_PER_SEC = 60
+const DEFAULT_HEIGHT_CLASS = "h-130" // 520px
+const DEFAULT_PERSPECTIVE = 1500
 
 // Duplicate images to create illusion of infinity if few images
 function getLoopedImages(images: string[]) {
@@ -18,10 +21,26 @@ function getLoopedImages(images: string[]) {
   return looped
 }
 
-export function CurvedCarousel({ images }: { images: string[] }) {
+type CurvedCarouselProps = {
+  images: string[]
+  cardWidth?: number
+  gap?: number
+  speedPxPerSec?: number
+  heightClassName?: string
+  perspective?: number
+}
+
+export function CurvedCarousel({
+  images,
+  cardWidth = DEFAULT_CARD_WIDTH,
+  gap = DEFAULT_GAP,
+  speedPxPerSec = DEFAULT_SPEED_PX_PER_SEC,
+  heightClassName = DEFAULT_HEIGHT_CLASS,
+  perspective = DEFAULT_PERSPECTIVE,
+}: CurvedCarouselProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [centerOffset, setCenterOffset] = useState(0)
-  const displayImages = getLoopedImages(images)
+  const displayImages = useMemo(() => getLoopedImages(images), [images])
   // We'll just render a standard marquee and use CSS/Framer for the curve? 
   // Ideally we need per-item transforms based on screen position.
   
@@ -30,161 +49,120 @@ export function CurvedCarousel({ images }: { images: string[] }) {
   // Or a framer motion value that drives x.
   
   const x = useMotionValue(0)
-  const [isHovered, setIsHovered] = useState(false)
+
+  // Track container size so 3D transforms stay accurate on resize.
+  useEffect(() => {
+    if (!containerRef.current) return
+    const el = containerRef.current
+    const update = () => setCenterOffset(el.clientWidth / 2)
+    update()
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
 
   // Auto-scroll logic
   useEffect(() => {
     let animationFrameId: number
     let lastTime = performance.now()
-    const speed = 0.5 // pixels per ms
 
     const animate = (time: number) => {
-      if (!isHovered) {
-        const delta = time - lastTime
-        const currentX = x.get()
-        const totalWidth = displayImages.length * (CARD_WIDTH + GAP)
-        
-        // Move left
-        let newX = currentX - speed * (delta / 16)
-        
-        // Wrap around logic can be complex with absolute positioning, 
-        // let's try a different approach: Infinite strip.
-        // If we move too far left, reset.
-        if (newX <= -totalWidth / 2) {
-             newX = 0
-        }
-        
-        x.set(newX)
+      const delta = time - lastTime
+      const currentX = x.get()
+
+      const totalWidth = displayImages.length * (cardWidth + gap)
+      const halfWidth = totalWidth / 2
+
+      // Move left at a constant rate (px/sec)
+      let newX = currentX - (speedPxPerSec * delta) / 1000
+
+      // Wrap seamlessly if the second half is a duplicate of the first.
+      if (halfWidth > 0 && newX <= -halfWidth) {
+        newX += halfWidth
       }
+
+      x.set(newX)
       lastTime = time
       animationFrameId = requestAnimationFrame(animate)
     }
 
     animationFrameId = requestAnimationFrame(animate)
     return () => cancelAnimationFrame(animationFrameId)
-  }, [x, isHovered, displayImages.length])
-
-  // Center calculation for 3D
-  useEffect(() => {
-    if (containerRef.current) {
-        setCenterOffset(containerRef.current.offsetWidth / 2)
-    }
-  }, [])
+  }, [x, displayImages.length, cardWidth, gap, speedPxPerSec])
 
   return (
     <div 
         ref={containerRef}
-        className="relative w-full overflow-hidden py-10 perspective-[1000px] h-[500px] flex items-center"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+      className={`relative w-full overflow-hidden py-6 ${heightClassName} flex items-center`}
+      style={{ perspective: `${perspective}px` }}
     >
-      <div className="absolute left-0 w-full h-full flex items-center justify-center">
+      <div className="absolute inset-0">
             {/* We render items absolutely based on the motion value x */}
             {displayImages.map((img, index) => (
                 <CarouselItem 
                     key={index} 
                     index={index} 
-                    total={displayImages.length}
                     x={x}
                     imgUrl={img}
                     centerOffset={centerOffset}
+                    cardWidth={cardWidth}
+                    gap={gap}
                 />
             ))}
       </div>
-      
-      {/* Gradients to fade edges */}
-      <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-background to-transparent z-20 pointer-events-none" />
-      <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-background to-transparent z-20 pointer-events-none" />
     </div>
   )
 }
 
 function CarouselItem({ 
     index, 
-    total, 
     x, 
     imgUrl,
-    centerOffset
+  centerOffset,
+  cardWidth,
+  gap,
 }: { 
     index: number
-    total: number
-    x: any
+    x: ReturnType<typeof useMotionValue<number>>
     imgUrl: string
     centerOffset: number
+  cardWidth: number
+  gap: number
 }) {
-    const itemRef = useRef<HTMLDivElement>(null)
-    const [style, setStyle] = useState<any>({})
+  const baseX = index * (cardWidth + gap)
+    const itemX = useTransform(x, (latestX) => baseX + latestX)
+  const distFromCenter = useTransform(itemX, (posX) => posX + cardWidth / 2 - centerOffset)
 
-    useEffect(() => {
-        // Subscribe to x changes to update transforms
-        const unsubscribe = x.on("change", (latestX: number) => {
-             // Calculate absolute position in the strip
-             const itemX = index * (CARD_WIDTH + GAP) + latestX
-             
-             // Check if we need to wrap visually?
-             // Since we have a long strip that resets, we need to ensure seamlessness.
-             // If we use "loopedImages" where total width is large enough, 
-             // and we reset X when it reaches half, we just need to render enough copies.
-             
-             // Let's refine the wrapping logic in the parent or here.
-             // Actually, parent resetting X from -HalfWidth to 0 works if the second half is a copy of the first.
-             // displayImages should be [A, B, C, A, B, C].
-             
-             // Position relative to viewport center
-             // The container is full width. 
-             // We want to center the strip? Adjust `latestX` so that 0 starts at center?
-             // Let's adding centerOffset to the position.
-             
-             const visualX = itemX + centerOffset // This puts the first item at center if X=0
-             // But we want the strip to start further right maybe?
-             // Lets assume itemX is strictly linear.
-             
-             // Distance from center of screen
-             const distFromCenter = visualX + CARD_WIDTH / 2 - centerOffset
-             
-             // 3D Transform
-             // Cap distance to avoid extreme rotations
-             // const maxDist = 800
-             // const clampedDist = Math.max(-maxDist, Math.min(maxDist, distFromCenter))
-             
-             // Rotate Y based on distance. 
-             // Left side (dist < 0) -> Rotate positive
-             const rotateY = -distFromCenter * 0.05
-             
-             // Push back based on distance
-             const translateZ = -Math.abs(distFromCenter) * 0.5
-             
-             // Opacity fade
-             const opacity = 1 - Math.min(1, Math.abs(distFromCenter) / 1000)
+    const rotateY = useTransform(distFromCenter, (d) => -d * 0.04)
+    const translateZ = useTransform(distFromCenter, (d) => -Math.abs(d) * 0.35)
+    const opacity = useTransform(distFromCenter, (d) => 1 - Math.min(1, Math.abs(d) / 1400))
+    const zIndex = useTransform(distFromCenter, (d) => Math.round(1000 - Math.abs(d)))
+    const transform = useMotionTemplate`translateX(${itemX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg)`
 
-             setStyle({
-                 transform: `translateX(${visualX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg)`,
-                 opacity,
-                 zIndex: Math.round(1000 - Math.abs(distFromCenter))
-             })
-        })
-        return () => unsubscribe()
-    }, [x, index, centerOffset])
-
+    // Minimalist border/frame that wraps the image with consistent padding.
     return (
-        <div 
-            ref={itemRef}
-            className="absolute top-1/2 -mt-[200px] left-0 rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black"
-            style={{
-                width: CARD_WIDTH,
-                height: CARD_HEIGHT,
-                ...style, // Applied via state from motion value subscription
-                willChange: "transform" // Critical for performance
-            }}
-        >
-            <Image 
-                src={imgUrl} 
-                alt="Project visual" 
-                fill 
-                className="object-cover pointer-events-none"
-                sizes="(max-width: 768px) 100vw, 300px"
-            />
-             <div className="absolute inset-0 bg-black/20" />
+      <motion.div
+        className="absolute top-1/2 -translate-y-1/2 left-0 p-2 rounded-xl border border-white/20 shadow-2xl bg-black/30 backdrop-blur-sm"
+        style={{
+          width: cardWidth,
+          transform,
+          opacity,
+          zIndex,
+          willChange: "transform",
+        }}
+      >
+        <div className="rounded-lg overflow-hidden bg-black/10">
+          <Image
+            src={imgUrl}
+            alt="Project visual"
+            width={1600}
+            height={1067}
+            className="block w-full h-auto object-contain pointer-events-none"
+            sizes={`(max-width: 768px) 92vw, ${cardWidth}px`}
+            priority={index < 2}
+          />
         </div>
+      </motion.div>
     )
 }
+

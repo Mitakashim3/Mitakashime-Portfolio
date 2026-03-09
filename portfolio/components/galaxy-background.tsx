@@ -7,189 +7,213 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Video, VideoOff } from "lucide-react"
 
 export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { scrollY: number }) {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false)
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true)
-  const capabilities = useDeviceCapabilities()
-  const chrome = useChromeVersion()
+    const videoRef = useRef<HTMLVideoElement>(null)
+    const [isVideoLoaded, setIsVideoLoaded] = useState(false)
+    const [isVideoEnabled, setIsVideoEnabled] = useState(true)
+    const capabilities = useDeviceCapabilities()
+    const chrome = useChromeVersion()
 
-  // Force a static background only for very old Chrome versions - mobile now gets video too!
-  const forceStaticBackground = chrome.isChrome && chrome.version !== null && chrome.version < 90
+    // Force a static background only for very old Chrome versions - mobile now gets video too!
+    const forceStaticBackground = chrome.isChrome && chrome.version !== null && chrome.version < 90
 
-  // Show the gradient skeleton only while the video hasn't loaded yet on mobile
-  const useMobileGradient = capabilities.isMobile && !isVideoLoaded
+    // Show the gradient skeleton only while the video hasn't loaded yet on mobile
+    const useMobileGradient = capabilities.isMobile && !isVideoLoaded
 
-  // Only force static on old Chrome
-  useEffect(() => {
-    if (forceStaticBackground) {
-      setIsVideoEnabled(false)
-    }
-  }, [forceStaticBackground])
+    // Only force static on old Chrome
+    useEffect(() => {
+        if (forceStaticBackground) {
+            setIsVideoEnabled(false)
+        }
+    }, [forceStaticBackground])
 
-  // Lazy load video only when needed and with adaptive quality
-  useEffect(() => {
-    if (forceStaticBackground || !videoRef.current || !isVideoEnabled) return
+    // Lazy load video only when needed and with adaptive quality
+    useEffect(() => {
+        if (forceStaticBackground || !videoRef.current || !isVideoEnabled) return
 
-    const video = videoRef.current
+        const video = videoRef.current
 
-    // Optimize video playback based on device
-    if (capabilities.isMobile) {
-      // On mobile: no blur needed, just ensure crisp playback
-      video.setAttribute('playsinline', 'true')
-      video.setAttribute('webkit-playsinline', 'true')
-    } else if (capabilities.isLowEnd) {
-      video.style.filter = "blur(0.5px)"
-    }
+        // Optimize video playback based on device
+        if (capabilities.isMobile) {
+            // On mobile: no blur needed, just ensure crisp playback
+            video.setAttribute('playsinline', 'true')
+            video.setAttribute('webkit-playsinline', 'true')
+        } else if (capabilities.isLowEnd) {
+            video.style.filter = "blur(0.5px)"
+        }
 
-    // Intersection observer for lazy loading
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !isVideoLoaded) {
-            video.src = "/Galaxyvideo-loop.mp4"
-            video.load()
-            setIsVideoLoaded(true)
-          }
+        // Intersection observer for lazy loading
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting && !isVideoLoaded) {
+                        video.src = "/Galaxyvideo-loop.mp4"
+                        video.load()
+                        setIsVideoLoaded(true)
+                    }
+                })
+            },
+            { threshold: 0.1 }
+        )
+
+        observer.observe(video)
+
+        return () => observer.disconnect()
+    }, [isVideoLoaded, capabilities, isVideoEnabled, forceStaticBackground])
+
+    // Pause video when not visible to save resources
+    useEffect(() => {
+        if (forceStaticBackground || !videoRef.current || !isVideoEnabled) return
+
+        const handleVisibilityChange = () => {
+            if (document.hidden) {
+                videoRef.current?.pause()
+            } else {
+                videoRef.current?.play().catch(() => {
+                    // Ignore autoplay errors
+                })
+            }
+        }
+
+        document.addEventListener("visibilitychange", handleVisibilityChange)
+        return () => document.removeEventListener("visibilitychange", handleVisibilityChange)
+    }, [isVideoEnabled, forceStaticBackground])
+
+    // On mobile: throttle video playback rate during scroll to reduce GPU decode pressure
+    useEffect(() => {
+        if (!capabilities.isMobile || !videoRef.current || !isVideoEnabled || forceStaticBackground) return
+        const video = videoRef.current
+        let scrollTimer: ReturnType<typeof setTimeout>
+        let isScrolling = false
+
+        const handleScroll = () => {
+            if (!isScrolling && video.playbackRate !== 0.5) {
+                video.playbackRate = 0.5
+            }
+            isScrolling = true
+            clearTimeout(scrollTimer)
+            scrollTimer = setTimeout(() => {
+                isScrolling = false
+                video.playbackRate = 1
+            }, 150)
+        }
+
+        window.addEventListener('scroll', handleScroll, { passive: true })
+        return () => {
+            window.removeEventListener('scroll', handleScroll)
+            clearTimeout(scrollTimer)
+        }
+    }, [capabilities.isMobile, isVideoEnabled, forceStaticBackground])
+
+    // Handle video toggle with useCallback for performance
+    const toggleVideo = useCallback(() => {
+        if (forceStaticBackground) return
+        setIsVideoEnabled(prev => {
+            if (!prev && videoRef.current) {
+                // Re-enable: reload and play
+                videoRef.current.src = "/Galaxyvideo-loop.mp4"
+                videoRef.current.load()
+                videoRef.current.play().catch(() => { })
+                setIsVideoLoaded(true)
+            } else if (videoRef.current) {
+                // Disable: pause and clear
+                videoRef.current.pause()
+            }
+            return !prev
         })
-      },
-      { threshold: 0.1 }
-    )
+    }, [forceStaticBackground])
 
-    observer.observe(video)
-
-    return () => observer.disconnect()
-  }, [isVideoLoaded, capabilities, isVideoEnabled, forceStaticBackground])
-
-  // Pause video when not visible to save resources
-  useEffect(() => {
-    if (forceStaticBackground || !videoRef.current || !isVideoEnabled) return
-
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        videoRef.current?.pause()
-      } else {
-        videoRef.current?.play().catch(() => {
-          // Ignore autoplay errors
-        })
-      }
+    // Disable video for users who prefer reduced motion
+    if (capabilities.prefersReducedMotion) {
+        return (
+            <div
+                className="fixed inset-0 w-full h-full z-0 pointer-events-none bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950"
+                style={{
+                    backgroundImage: "radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 50%)",
+                }}
+            />
+        )
     }
 
-    document.addEventListener("visibilitychange", handleVisibilityChange)
-    return () => document.removeEventListener("visibilitychange", handleVisibilityChange)
-  }, [isVideoEnabled, forceStaticBackground])
+    // Use simpler animations for older Chrome versions
+    const animationDuration = chrome.shouldUseModernFeatures ? 0.5 : 0.3
 
-  // Handle video toggle with useCallback for performance
-  const toggleVideo = useCallback(() => {
-    if (forceStaticBackground) return
-    setIsVideoEnabled(prev => {
-      if (!prev && videoRef.current) {
-        // Re-enable: reload and play
-        videoRef.current.src = "/Galaxyvideo-loop.mp4"
-        videoRef.current.load()
-        videoRef.current.play().catch(() => { })
-        setIsVideoLoaded(true)
-      } else if (videoRef.current) {
-        // Disable: pause and clear
-        videoRef.current.pause()
-      }
-      return !prev
-    })
-  }, [forceStaticBackground])
+    // Calculate scale based on scrollY for subtle zoom effect - memoized
+    // Only zoom during the hero sequence (0-2000px)
+    const scale = useMemo(() => 1 + Math.min(scrollY, 2000) * 0.00015, [scrollY])
 
-  // Disable video for users who prefer reduced motion
-  if (capabilities.prefersReducedMotion) {
+    const showVideo = isVideoEnabled && !forceStaticBackground
+
     return (
-      <div
-        className="fixed inset-0 w-full h-full z-0 pointer-events-none bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950"
-        style={{
-          backgroundImage: "radial-gradient(circle at 50% 50%, rgba(16, 185, 129, 0.1) 0%, transparent 50%)",
-        }}
-      />
-    )
-  }
+        <>
+            {/* Video Toggle Button - Show on mobile or low-end devices, always on top and tappable */}
+            {(capabilities.isMobile || capabilities.isLowEnd) && !forceStaticBackground && (
+                <button
+                    onClick={toggleVideo}
+                    className="fixed bottom-6 left-6 z-[999] p-3 sm:p-4 rounded-full bg-black/60 backdrop-blur-md border border-primary/40 text-primary active:bg-primary/30 touch-manipulation shadow-[0_0_15px_rgba(16,185,129,0.3)] pointer-events-auto"
+                    style={{ WebkitTapHighlightColor: 'transparent' }}
+                    aria-label={isVideoEnabled ? "Turn off background video" : "Turn on background video"}
+                >
+                    {isVideoEnabled ? <VideoOff className="w-5 h-5 sm:w-6 sm:h-6" /> : <Video className="w-5 h-5 sm:w-6 sm:h-6" />}
+                </button>
+            )}
 
-  // Use simpler animations for older Chrome versions
-  const animationDuration = chrome.shouldUseModernFeatures ? 0.5 : 0.3
+            <AnimatePresence mode="wait">
+                {showVideo ? (
+                    <motion.video
+                        key="video"
+                        ref={videoRef}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: animationDuration }}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        preload="none"
+                        className="fixed inset-0 w-full h-full object-cover z-0 pointer-events-none"
+                        style={{
+                            // Disable scroll-zoom on mobile - constant scale compositing causes jank
+                            transform: capabilities.isMobile ? undefined : `scale(${scale})`,
+                            willChange: capabilities.isMobile ? 'auto' : 'transform',
+                        }}
+                    />
+                ) : useMobileGradient ? (
+                    <motion.div
+                        key="mobile-gradient"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: animationDuration }}
+                        className="fixed inset-0 w-full h-full z-0 pointer-events-none"
+                    >
+                        {/* Dark space base gradient */}
+                        <div
+                            className="absolute inset-0"
+                            style={{
+                                background: "linear-gradient(180deg, #050510 0%, #0a0a1e 20%, #0d1528 45%, #0a1220 65%, #080818 85%, #050510 100%)",
+                            }}
+                        />
 
-  // Calculate scale based on scrollY for subtle zoom effect - memoized
-  // Only zoom during the hero sequence (0-2000px)
-  const scale = useMemo(() => 1 + Math.min(scrollY, 2000) * 0.00015, [scrollY])
+                        {/* Subtle nebula glow - positioned to add depth */}
+                        <div
+                            className="absolute top-[20%] left-[30%] w-[250px] h-[250px] rounded-full opacity-15"
+                            style={{
+                                background: 'radial-gradient(circle, rgba(56,189,248,0.25) 0%, rgba(139,92,246,0.1) 40%, transparent 70%)',
+                                filter: 'blur(60px)'
+                            }}
+                        />
+                        <div
+                            className="absolute top-[60%] right-[20%] w-[200px] h-[200px] rounded-full opacity-10"
+                            style={{
+                                background: 'radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(56,189,248,0.08) 50%, transparent 70%)',
+                                filter: 'blur(50px)'
+                            }}
+                        />
 
-  const showVideo = isVideoEnabled && !forceStaticBackground
-
-  return (
-    <>
-      {/* Video Toggle Button - Show on mobile or low-end devices */}
-      {(capabilities.isMobile || capabilities.isLowEnd) && !forceStaticBackground && (
-        <motion.button
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
-          onClick={toggleVideo}
-          className="fixed bottom-6 right-6 z-[100] p-3 sm:p-4 rounded-full bg-black/60 backdrop-blur-md border border-primary/40 text-primary hover:bg-primary/20 transition-colors touch-manipulation shadow-[0_0_15px_rgba(16,185,129,0.3)]"
-          aria-label={isVideoEnabled ? "Turn off background video" : "Turn on background video"}
-        >
-          {isVideoEnabled ? <VideoOff className="w-5 h-5 sm:w-6 sm:h-6" /> : <Video className="w-5 h-5 sm:w-6 sm:h-6" />}
-        </motion.button>
-      )}
-
-      <AnimatePresence mode="wait">
-        {showVideo ? (
-          <motion.video
-            key="video"
-            ref={videoRef}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: animationDuration }}
-            poster="/Clark_Profile_Picture.png"
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="none"
-            className="fixed inset-0 w-full h-full object-cover z-0 pointer-events-none"
-            style={{
-              transform: `scale(${scale})`,
-              willChange: capabilities.isLowEnd ? "auto" : "transform",
-            }}
-          />
-        ) : useMobileGradient ? (
-          <motion.div
-            key="mobile-gradient"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: animationDuration }}
-            className="fixed inset-0 w-full h-full z-0 pointer-events-none"
-          >
-            {/* Dark space base gradient */}
-            <div
-              className="absolute inset-0"
-              style={{
-                background: "linear-gradient(180deg, #050510 0%, #0a0a1e 20%, #0d1528 45%, #0a1220 65%, #080818 85%, #050510 100%)",
-              }}
-            />
-
-            {/* Subtle nebula glow - positioned to add depth */}
-            <div
-              className="absolute top-[20%] left-[30%] w-[250px] h-[250px] rounded-full opacity-15"
-              style={{
-                background: 'radial-gradient(circle, rgba(56,189,248,0.25) 0%, rgba(139,92,246,0.1) 40%, transparent 70%)',
-                filter: 'blur(60px)'
-              }}
-            />
-            <div
-              className="absolute top-[60%] right-[20%] w-[200px] h-[200px] rounded-full opacity-10"
-              style={{
-                background: 'radial-gradient(circle, rgba(16,185,129,0.2) 0%, rgba(56,189,248,0.08) 50%, transparent 70%)',
-                filter: 'blur(50px)'
-              }}
-            />
-
-            {/* Static stars layer - pure CSS, zero JS overhead */}
-            <div className="absolute inset-0" style={{
-              backgroundImage: `
+                        {/* Static stars layer - pure CSS, zero JS overhead */}
+                        <div className="absolute inset-0" style={{
+                            backgroundImage: `
                 radial-gradient(1px 1px at 10% 10%, rgba(255,255,255,0.8) 50%, transparent 50%),
                 radial-gradient(1px 1px at 20% 40%, rgba(255,255,255,0.6) 50%, transparent 50%),
                 radial-gradient(1.5px 1.5px at 30% 70%, rgba(255,255,255,0.9) 50%, transparent 50%),
@@ -216,33 +240,33 @@ export const GalaxyBackground = memo(function GalaxyBackground({ scrollY }: { sc
                 radial-gradient(0.5px 0.5px at 72% 88%, rgba(255,255,255,0.4) 50%, transparent 50%),
                 radial-gradient(0.5px 0.5px at 88% 62%, rgba(255,255,255,0.3) 50%, transparent 50%)
               `
-            }} />
+                        }} />
 
-            {/* Twinkling stars - minimal CSS animation */}
-            <div className="absolute w-1 h-1 rounded-full bg-white/90 top-[15%] left-[25%] animate-pulse" style={{ animationDuration: '2s' }} />
-            <div className="absolute w-1 h-1 rounded-full bg-white/80 top-[45%] left-[75%] animate-pulse" style={{ animationDuration: '3s', animationDelay: '1s' }} />
-            <div className="absolute w-1.5 h-1.5 rounded-full bg-cyan-300/70 top-[70%] left-[15%] animate-pulse" style={{ animationDuration: '2.5s', animationDelay: '0.5s' }} />
-            <div className="absolute w-1 h-1 rounded-full bg-white/70 top-[25%] left-[85%] animate-pulse" style={{ animationDuration: '4s', animationDelay: '2s' }} />
-            <div className="absolute w-0.5 h-0.5 rounded-full bg-white/60 top-[55%] left-[45%] animate-pulse" style={{ animationDuration: '3.5s', animationDelay: '0.8s' }} />
-            <div className="absolute w-1 h-1 rounded-full bg-white/75 top-[80%] left-[60%] animate-pulse" style={{ animationDuration: '2.8s', animationDelay: '1.5s' }} />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="static"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: animationDuration }}
-            className="fixed inset-0 w-full h-full z-0 pointer-events-none bg-center bg-cover"
-            style={{
-              backgroundImage: "url('/galaxy-bg.jpg')",
-            }}
-          />
-        )}
-      </AnimatePresence>
+                        {/* Twinkling stars - minimal CSS animation */}
+                        <div className="absolute w-1 h-1 rounded-full bg-white/90 top-[15%] left-[25%] animate-pulse" style={{ animationDuration: '2s' }} />
+                        <div className="absolute w-1 h-1 rounded-full bg-white/80 top-[45%] left-[75%] animate-pulse" style={{ animationDuration: '3s', animationDelay: '1s' }} />
+                        <div className="absolute w-1.5 h-1.5 rounded-full bg-cyan-300/70 top-[70%] left-[15%] animate-pulse" style={{ animationDuration: '2.5s', animationDelay: '0.5s' }} />
+                        <div className="absolute w-1 h-1 rounded-full bg-white/70 top-[25%] left-[85%] animate-pulse" style={{ animationDuration: '4s', animationDelay: '2s' }} />
+                        <div className="absolute w-0.5 h-0.5 rounded-full bg-white/60 top-[55%] left-[45%] animate-pulse" style={{ animationDuration: '3.5s', animationDelay: '0.8s' }} />
+                        <div className="absolute w-1 h-1 rounded-full bg-white/75 top-[80%] left-[60%] animate-pulse" style={{ animationDuration: '2.8s', animationDelay: '1.5s' }} />
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key="static"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: animationDuration }}
+                        className="fixed inset-0 w-full h-full z-0 pointer-events-none bg-center bg-cover"
+                        style={{
+                            backgroundImage: "url('/galaxy-bg.jpg')",
+                        }}
+                    />
+                )}
+            </AnimatePresence>
 
-      {/* Consistent dark overlay - lighter so the video/gradient shows through vividly */}
-      <div className={`fixed inset-0 z-0 pointer-events-none ${capabilities.isMobile ? 'bg-black/20' : 'bg-black/30'}`} />
-    </>
-  )
+            {/* Consistent dark overlay - lighter so the video/gradient shows through vividly */}
+            <div className={`fixed inset-0 z-0 pointer-events-none ${capabilities.isMobile ? 'bg-black/20' : 'bg-black/30'}`} />
+        </>
+    )
 })
