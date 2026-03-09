@@ -28,7 +28,7 @@ export const Experience = memo(function Experience({ scrollY, componentScale }: 
       const tl = gsap.timeline({
         scrollTrigger: {
           trigger: card,
-          start: "top 75%",
+          start: "top 85%", // Trigger earlier in the viewport
           toggleActions: "play none none reverse"
         }
       })
@@ -44,9 +44,8 @@ export const Experience = memo(function Experience({ scrollY, componentScale }: 
           filter: "blur(0px)",
           opacity: 1,
           scale: 1,
-          duration: 0.8,
+          duration: 0.4,
           ease: "power2.out",
-          delay: i * 0.2,
         }
       )
 
@@ -57,7 +56,7 @@ export const Experience = memo(function Experience({ scrollY, componentScale }: 
         },
         {
           height: "100%",
-          duration: 0.8,
+          duration: 0.4,
           ease: "power2.out",
         },
         0
